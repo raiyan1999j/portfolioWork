@@ -1,3 +1,5 @@
+import "./globals.css";
+
 type Children = {
   children : React.ReactNode
 }
