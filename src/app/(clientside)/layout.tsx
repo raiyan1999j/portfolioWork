@@ -1,3 +1,4 @@
+import Settings from "./pages/settings/settings"
 import SideNav from "./sidenav/page"
 
 type Children = {
@@ -14,6 +15,7 @@ export default function ClientLayout({children}:Children){
                 </div>
 
                 <div className="col-span-9">
+                    <Settings/>
                     {children}
                 </div>
             </div>

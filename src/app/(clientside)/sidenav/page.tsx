@@ -1,9 +1,11 @@
 "use client";
+import { InfoProvider } from "@/app/contextprovider/contextprovider";
 import {Jost} from "next/font/google";
 import Link from "next/link";
-import { AiFillFacebook, AiFillGithub, AiOutlineUser } from "react-icons/ai";
+import { useContext, useEffect } from "react";
+import { AiFillGithub, AiOutlineUser } from "react-icons/ai";
 import { BsEnvelopeAtFill } from "react-icons/bs";
-import { FaInstagram, FaLinkedinIn, FaRegPaperPlane, FaRegUser } from "react-icons/fa";
+import { FaFacebookSquare, FaInstagram, FaLinkedinIn, FaRegPaperPlane, FaRegUser } from "react-icons/fa";
 import { IoNewspaperOutline } from "react-icons/io5";
 import { VscCode } from "react-icons/vsc";
 
@@ -13,7 +15,7 @@ const jost = Jost({
 
 const socialLink = [
     {
-        icon: <AiFillFacebook />
+        icon: <FaFacebookSquare />
     },
     {
         icon: <FaInstagram />
@@ -50,29 +52,21 @@ const pages = [
 ]
 
 export default function SideNav(){
-    const scrollbarStyle = `
-        .custom-scrollbar::-webkit-scrollbar {
-        width: 5px;
-      }
-      
-      .custom-scrollbar::-webkit-scrollbar-track {
-        background: #ecf0f1;
-        box-shadow: inset 0 0 5px rgba(0, 0, 0, 0.3);
-      }
-      
-      .custom-scrollbar::-webkit-scrollbar-thumb {
-        background: #f1c40f;
-        border-radius: 10px;
-        min-height: 40px;
-      }
-    `;
+    const context = useContext(InfoProvider);
+
+    if(!context) throw new Error("context error");
+
+    const {combineColor} = context;
+
+    useEffect(()=>{
+        document.documentElement.style.setProperty('--combineColor',combineColor)
+    },[combineColor])
     return(
         <>
-        <style jsx>{scrollbarStyle}</style>
         <section className="custom-scrollbar px-5 py-5 overflow-y-scroll fixed top-0 left-0 w-1/4 h-screen">
             <div>
                 <div className="flex justify-center mb-2.5">
-                    <div className="h-20 w-20 rounded-full bg-amber-300 flex justify-center items-center">
+                    <div className="h-20 w-20 rounded-full flex justify-center items-center bg-[var(--combineColor)]">
 
                     </div>
                 </div>
@@ -89,7 +83,7 @@ export default function SideNav(){
                 <div className="flex flex-row justify-center gap-x-2.5 mb-10">
                    {
                     socialLink.map((items,index)=>{
-                        return <span className="h-[32px] w-[32px] rounded-full border border-amber-300 flex justify-center items-center text-amber-300" key={index}>
+                        return <span className="h-[32px] w-[32px] rounded-full border border-black/20 flex justify-center items-center transition-all duration-150 ease-linear text-[var(--combineColor)] hover:bg-[var(--combineColor)] hover:text-white hover:border-none" key={index}>
                             {items.icon}
                         </span>
                     })
@@ -102,7 +96,7 @@ export default function SideNav(){
             <div className="flex flex-col gap-y-5 w-[80%] mx-auto mb-10">
                 {
                     pages.map((items,index)=>{
-                        return <Link className={`${jost.className} flex flex-row gap-x-2.5 items-center w-full bg-amber-300 py-2 rounded-lg px-4 text-white text-base font-medium capitalize`} href={items.link} key={index}>
+                        return <Link className={`${jost.className} flex flex-row gap-x-2.5 items-center w-full py-2 rounded-lg px-4 text-black/80 text-base font-medium capitalize hover:bg-[var(--combineColor)] hover:text-white transition-all duration-300 ease-linear`} href={items.link} key={index}>
                             <span>
                                 {items.icon}
                             </span>
@@ -115,7 +109,7 @@ export default function SideNav(){
             </div>
 
             <div className="w-[80%] mx-auto flex justify-center">
-                <button className={`${jost.className} capitalize font-semibold gap-x-2 bg-amber-300 text-white px-2 py-1 rounded-full flex flex-row items-center`}>
+                <button className={`${jost.className} capitalize font-semibold gap-x-2 bg-[var(--combineColor)] text-white px-2 py-1 rounded-full flex flex-row items-center`}>
                     <span>
                         <FaRegPaperPlane />
                     </span>

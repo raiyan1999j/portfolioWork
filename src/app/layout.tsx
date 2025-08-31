@@ -1,3 +1,4 @@
+import ContextProvider from "./contextprovider/contextprovider";
 import "./globals.css";
 
 type Children = {
@@ -9,7 +10,9 @@ export default function RootLayout({children}:Children){
     <>
     <html>
       <body cz-shortcut-listen="true">
+        <ContextProvider>
         {children}
+        </ContextProvider>
       </body>
     </html>
     </>
