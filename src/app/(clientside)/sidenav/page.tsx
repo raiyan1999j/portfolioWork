@@ -56,14 +56,11 @@ export default function SideNav(){
 
     if(!context) throw new Error("context error");
 
-    const {combineColor} = context;
-
-    useEffect(()=>{
-        document.documentElement.style.setProperty('--combineColor',combineColor)
-    },[combineColor])
+    const {darkMode} = context;
+    
     return(
         <>
-        <section className="custom-scrollbar px-5 py-5 overflow-y-scroll fixed top-0 left-0 w-1/4 h-screen">
+        <section className={`custom-scrollbar px-5 py-5 overflow-y-scroll fixed top-0 left-0 w-1/4 h-screen bg-[var(--darkBg,white)]`}>
             <div>
                 <div className="flex justify-center mb-2.5">
                     <div className="h-20 w-20 rounded-full flex justify-center items-center bg-[var(--combineColor)]">
@@ -72,10 +69,10 @@ export default function SideNav(){
                 </div>
                 
                 <div className="text-center space-y-1 mb-5">
-                    <h2 className={`${jost.className} text-2xl capitalize text-black/80 font-bold`}>
+                    <h2 className={`${jost.className} text-2xl capitalize text-[var(--darkTxt,rgba(0,0,0,0.8))] font-bold`}>
                         raiyan khan
                     </h2>
-                    <h4 className={`${jost.className} text-sm capitalize text-black/80 font-normal`}>
+                    <h4 className={`${jost.className} text-sm capitalize text-[var(--darkTxt,rgba(0,0,0,0.8))] font-normal`}>
                         Front end developer
                     </h4>
                 </div>
@@ -96,7 +93,7 @@ export default function SideNav(){
             <div className="flex flex-col gap-y-5 w-[80%] mx-auto mb-10">
                 {
                     pages.map((items,index)=>{
-                        return <Link className={`${jost.className} flex flex-row gap-x-2.5 items-center w-full py-2 rounded-lg px-4 text-black/80 text-base font-medium capitalize hover:bg-[var(--combineColor)] hover:text-white transition-all duration-300 ease-linear`} href={items.link} key={index}>
+                        return <Link className={`${jost.className} flex flex-row gap-x-2.5 items-center w-full py-2 rounded-lg px-4 text-[var(--darkTxt,rgba(0,0,0,0.8))] text-base font-medium capitalize hover:bg-[var(--combineColor)] hover:text-white transition-all duration-300 ease-linear`} href={items.link} key={index}>
                             <span>
                                 {items.icon}
                             </span>
@@ -109,7 +106,7 @@ export default function SideNav(){
             </div>
 
             <div className="w-[80%] mx-auto flex justify-center">
-                <button className={`${jost.className} capitalize font-semibold gap-x-2 bg-[var(--combineColor)] text-white px-2 py-1 rounded-full flex flex-row items-center`}>
+                <button className={`${jost.className} capitalize font-semibold gap-x-2 text-white px-2 py-1 rounded-full flex flex-row items-center relative overflow-hidden z-30 before:absolute before:bg-[var(--combineColor)] before:top-0 before:left-0 before:content-'' before:h-full before:w-full before:rounded-full before:-z-20 after:absolute after:content-'' after:top-[100%] after:left-0 after:bg-slate-600 after:h-full after:w-full after:rounded-full after:-z-10 after:transition-all after:duration-300 after:ease-linear hover:after:top-0`}>
                     <span>
                         <FaRegPaperPlane />
                     </span>

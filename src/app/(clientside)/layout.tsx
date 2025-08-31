@@ -8,7 +8,7 @@ type Children = {
 export default function ClientLayout({children}:Children){
     return(
         <>
-        <section>
+        <section className="">
             <div className="grid grid-cols-12 w-full">
                 <div className="col-span-3">
                     <SideNav/>

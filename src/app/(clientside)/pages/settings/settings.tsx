@@ -11,7 +11,7 @@ export default function Settings(){
 
     if(!context) throw new Error("context not working");
 
-    const {setCombine} = context;
+    const {setCombine,setModeEnable,darkMode} = context;
     const [collapse,setCollapse] = useState<boolean>(false);
     const [modeSwap,setSwap] = useState(false);
     return(
@@ -27,11 +27,11 @@ export default function Settings(){
                 </div>
 
                 <div className="w-[20%] flex justify-center items-center">
-                    <span className="text-2xl text-gray-400 transition-all" onClick={()=>{setSwap(!modeSwap)}}>
+                    <span className="text-2xl text-gray-400 transition-all" onClick={()=>{setModeEnable(!darkMode)}}>
                         {
-                            modeSwap?
-                            <FaMoon />:
-                            <FaSun/>
+                            darkMode?
+                            <FaSun/>:
+                            <FaMoon/>
                         }
                     </span>
                 </div>
