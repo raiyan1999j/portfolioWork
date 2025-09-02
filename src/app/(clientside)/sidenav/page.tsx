@@ -1,8 +1,6 @@
 "use client";
-import { InfoProvider } from "@/app/contextprovider/contextprovider";
 import {Jost} from "next/font/google";
 import Link from "next/link";
-import { useContext, useEffect } from "react";
 import { AiFillGithub, AiOutlineUser } from "react-icons/ai";
 import { BsEnvelopeAtFill } from "react-icons/bs";
 import { FaFacebookSquare, FaInstagram, FaLinkedinIn, FaRegPaperPlane, FaRegUser } from "react-icons/fa";
@@ -52,12 +50,6 @@ const pages = [
 ]
 
 export default function SideNav(){
-    const context = useContext(InfoProvider);
-
-    if(!context) throw new Error("context error");
-
-    const {darkMode} = context;
-    
     return(
         <>
         <section className={`custom-scrollbar px-5 py-5 overflow-y-scroll fixed top-0 left-0 w-1/4 h-screen bg-[var(--darkBg,white)]`}>

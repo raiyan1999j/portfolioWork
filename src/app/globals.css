@@ -39,3 +39,21 @@ body {
   border-radius: 10px;
   min-height: 40px;
 }
+/* introductionPage */
+@keyframes swing6to0 {
+  0%{transform:rotate(6deg)}
+  50%{transform:rotate(0deg)}
+  100%{transform:rotate(6deg)}
+}
+@keyframes textAnimation {
+  from{width:0ch}
+  to{width:var(--wordCh)}
+}
+@keyframes slideBack {
+  from{width:var(--wordCh)}
+  to{width:0ch}
+}
+@keyframes blinkCursor {
+  0%, 50% { border-color: transparent; }
+  51%, 100% { border-color: var(--combineColor); }
+}
