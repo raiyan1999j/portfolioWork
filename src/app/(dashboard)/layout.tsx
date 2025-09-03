@@ -1,4 +1,5 @@
 import Header from "./dashboard/header/header"
+import Sidenav from "./dashboard/sidenav/sidenav"
 
 type ChildrenType = {
     children: React.ReactNode
@@ -11,8 +12,8 @@ export default function DashboarLayout({children}:ChildrenType){
             <Header/>
         </section>
 
-        <section>
-            
+        <section >
+            <Sidenav/>
         </section>
         </>
     )

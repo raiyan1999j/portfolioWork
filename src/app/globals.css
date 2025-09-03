@@ -24,6 +24,9 @@ body {
   color: var(--foreground);
   font-family: Arial, Helvetica, sans-serif;
 }
+/* ================ */
+/* clientStart */
+/* =============== */
 /* sidenav */
 .custom-scrollbar::-webkit-scrollbar {
   width: 5px;
@@ -57,3 +60,27 @@ body {
   0%, 50% { border-color: transparent; }
   51%, 100% { border-color: var(--combineColor); }
 }
+/* ================ */
+/* clientFinish */
+/* =============== */
+
+/* ================ */
+/* dashboardStrat */
+/* =============== */
+.sidenavScrollbar::-webkit-scrollbar{
+  width:8px
+}
+.sidenavScrollbar::-webkit-scrollbar-corner{
+  background-color:crimson;
+}
+.sidenavScrollbar::-webkit-scrollbar-track{
+  background-color:rgba(189, 195, 199, 0.4);
+  border-radius: 50px;
+}
+.sidenavScrollbar::-webkit-scrollbar-thumb{
+  background-color:var(--combineColor);
+  border-radius: 100px;
+}
+/* ================ */
+/* dashboardFinish */
+/* =============== */
