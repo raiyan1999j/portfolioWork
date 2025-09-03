@@ -27,13 +27,13 @@ export default function Settings(){
                 </div>
 
                 <div className="w-[20%] flex justify-center items-center">
-                    <span className="text-2xl text-gray-400 transition-all" onClick={()=>{setModeEnable(!darkMode)}}>
+                    <button className="text-2xl text-gray-400 hover:cursor-pointer" onClick={()=>{setModeEnable((prev)=>({...prev,clientSide:!prev.clientSide}))}}>
                         {
-                            darkMode?
+                            darkMode.clientSide?
                             <FaSun/>:
                             <FaMoon/>
                         }
-                    </span>
+                    </button>
                 </div>
 
                 <div className="absolute -left-[20%] top-[25%] text-xl shadow-[0px_0px_2px_black]/20 p-2.5 rounded-tl-xl rounded-bl-xl bg-[var(--combineColor)] text-white" onClick={()=>{setCollapse(!collapse)}}>

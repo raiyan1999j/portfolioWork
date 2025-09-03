@@ -1,5 +1,6 @@
 import Settings from "./pages/settings/settings"
-import SideNav from "./sidenav/page"
+import SideNav from "./sidenav/sidenav"
+
 
 type Children = {
     children : React.ReactNode

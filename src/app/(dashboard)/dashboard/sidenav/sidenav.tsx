@@ -74,7 +74,7 @@ export default function Sidenav(){
             </div>
 
         <div className={`absolute -top-5 transition-all duration-150 ease-linear ${collapse.menuCollapse ? "opacity-0 pointer-events-none duration-100" : "opacity-100 duration-1000"}`}>
-            <button className="transition-all duration-150 ease-linear text-xl hover:text-[var(--combineColor)] hover:cursor-pointer" onClick={()=>{setCollapse(prev=>({...prev,menuCollapse:!prev.menuCollapse}))}}>    
+            <button className="transition-all duration-150 ease-linear text-xl hover:text-[var(--combineColor)] hover:cursor-pointer text-[var(--darkDashTxt,0,0,0,0.8)]" onClick={()=>{setCollapse(prev=>({...prev,menuCollapse:!prev.menuCollapse}))}}>    
                 <FaAngleDoubleRight />
             </button>
         </div>
@@ -87,12 +87,12 @@ export default function Sidenav(){
                     menus.map((items,index)=>{
                         return <Link href={items.link} className="flex flex-row gap-x-2.5 items-center group/items" key={index}>
                             <div>
-                                <span className="text-2xl text-black/80 transition-all duration-150 ease-linear group-hover/items:text-[var(--combineColor)]">
+                                <span className="text-2xl text-[var(--darkDashTxt,0,0,0,0.8)] transition-all duration-150 ease-linear group-hover/items:text-[var(--combineColor)]">
                                     {items.icon}
                                 </span>
                             </div>
 
-                            <div className="border-b border-b-black/10 py-2.5 w-[80%] text-black/80 transition-all duration-200 ease-linear group-hover/items:bg-[var(--combineColor)] group-hover/items:text-white group-hover/items:rounded-lg group-hover/items:px-5">
+                            <div className="border-b border-b-black/10 py-2.5 w-[80%] text-[var(--darkDashTxt,0,0,0,0.8)] transition-all duration-200 ease-linear group-hover/items:bg-[var(--combineColor)] group-hover/items:text-white group-hover/items:rounded-lg group-hover/items:px-5">
                                 <span className={`${anton.className} text-2xl capitalize`}>
                                     {items.title}
                                 </span>
@@ -105,7 +105,7 @@ export default function Sidenav(){
         </div>
 
         <div className={`absolute top-[45%] ${collapse.menuCollapse?"right-[-15%]":"right-[-100%]"}`}>
-            <button className="text-2xl py-4 px-2 rounded-lg shadow-lg shadow-black/20 transition-all duration-150 ease-linear hover:bg-[var(--combineColor)] hover:text-white" onClick={handleCollapse}>
+            <button className="text-2xl py-4 px-2 rounded-lg shadow-lg shadow-black/20 transition-all duration-150 ease-linear hover:bg-[var(--combineColor)] hover:text-white text-[var(--darkDashTxt,0,0,0,0.8)]" onClick={handleCollapse}>
                 <RiMenuUnfold2Fill />
             </button>
         </div>
