@@ -27,7 +27,7 @@ export default function Header(){
             <div className="px-10 flex items-center">
                 <div className="h-10 w-full relative">
                     <div className="absolute h-full w-full">
-                        <input type="text" className={`${jost.className} h-full w-full border border-gray-300 rounded-lg px-2.5 placeholder:text-[var(--darkDashTxt,0,0,0,0.2)] text-[var(--darkDashTxt,0,0,0,0.8)] focus:outline-none focus:border-2`} placeholder="Search anything you want"/>
+                        <input type="text" className={`${jost.className} h-full w-full border border-gray-300 rounded-lg px-2.5 placeholder:text-[var(--darkDashTxt,rgba(0,0,0,0.2))] text-[var(--darkDashTxt,rgba(0,0,0,0.8))] focus:outline-none focus:border-2`} placeholder="Search anything you want"/>
                     </div>
                 </div>
             </div>
@@ -45,11 +45,11 @@ export default function Header(){
                             
                         </div>
                         <div className="flex flex-row items-center gap-x-1.5">
-                            <p className={`${anton.className} text-[var(--darkDashTxt,0,0,0,0.8)] capitalize`}>
+                            <p className={`${anton.className} text-[var(--darkDashTxt,rgba(0,0,0,0.8))] capitalize`}>
                                 raiyan khan
                             </p>
                             
-                            <span className="text-[var(--darkDashTxt,0,0,0,0.2)]">
+                            <span className="text-[var(--darkDashTxt,rgba(0,0,0,0.2))]">
                                 <IoIosArrowDown />
                             </span>
                         </div>

@@ -22,7 +22,7 @@ const menus = [
     },
     {
         title:"about me",
-        link:"#",
+        link:"/dashboard/about",
         icon:<FaRegUser />
     },
     {
@@ -65,7 +65,7 @@ export default function Sidenav(){
     }
     return(
         <>
-        <div className={`fixed top-[20%] ${collapse.mainCollapse?"left-[2%]":"left-[-4%]"} ${collapse.menuCollapse?"w-1/4":"w-[3.5%]"} h-[60vh] transition-all duration-200 ease-linear`}>
+        <div className={`fixed top-[20%] bg-[var(--darkDashBg,rgba(255,255,255,1))] z-40 ${collapse.mainCollapse?"left-[2%]":"left-[-4%]"} ${collapse.menuCollapse?"w-1/4":"w-[3.5%]"} h-[60vh] transition-all duration-200 ease-linear`}>
 
         <div className={`absolute -top-5 -right-5 z-10 transition-all ease-linear ${collapse.menuCollapse?"opacity-100 duration-1000":"opacity-0 duration-100 pointer-events-none"}`}>
                 <button className="h-10 w-10 rounded-full text-white bg-slate-500 flex justify-center items-center transition-all duration-150 ease-linear hover:bg-[var(--combineColor)]" onClick={()=>{setCollapse(prev=>({...prev,menuCollapse:!prev.menuCollapse}))}}>
@@ -104,7 +104,7 @@ export default function Sidenav(){
 
         </div>
 
-        <div className={`absolute top-[45%] ${collapse.menuCollapse?"right-[-15%]":"right-[-100%]"}`}>
+        <div className={`absolute top-[45%] rounded-lg bg-[var(--darkDashBg,rgba(255,255,255,1))] z-40 ${collapse.menuCollapse?"right-[-15%]":"right-[-100%]"}`}>
             <button className="text-2xl py-4 px-2 rounded-lg shadow-lg shadow-black/20 transition-all duration-150 ease-linear hover:bg-[var(--combineColor)] hover:text-white text-[var(--darkDashTxt,0,0,0,0.8)]" onClick={handleCollapse}>
                 <RiMenuUnfold2Fill />
             </button>

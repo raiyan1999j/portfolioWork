@@ -8,7 +8,7 @@ type ChildrenType = {
 export default function DashboarLayout({children}:ChildrenType){
     return(
         <>
-        <section className="px-10 border-b border-b-gray-300 fixed top-0 left-0 w-full bg-[var(--darkDashBg,transparent)]">
+        <section className="px-10 border-b border-b-gray-300 fixed z-50 top-0 left-0 w-full bg-[var(--darkDashBg,white)]">
             <Header/>
         </section>
 
@@ -16,8 +16,8 @@ export default function DashboarLayout({children}:ChildrenType){
             <Sidenav/>
         </section>
 
-        <section className="h-screen w-full bg-[var(--darkDashBg,white)]">
-
+        <section className="h-full w-full bg-[var(--darkDashBg,white)] py-[68px] px-10">
+            {children}
         </section>
         </>
     )
