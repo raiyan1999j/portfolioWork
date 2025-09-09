@@ -17,7 +17,7 @@ type ContextType = {
 export const InfoProvider = createContext<ContextType|null>(null);
 
 export default function ContextProvider({children}:ChildrenTypes){
-    const [combineColor,setCombine] = useState<string|null>("#f9ca24");
+    const [combineColor,setCombine] = useState<string|null>("#FDBB2E");
     
     const [darkMode,setModeEnable] = useState<DarkModeTypes>({
         clientSide:false,

@@ -4,7 +4,7 @@ import { useContext, useState } from "react";
 import { FaMoon, FaSun } from "react-icons/fa"
 import { IoSettings } from "react-icons/io5"
 
-const colors = ["#2ecc71","#e74c3c","#3498db","#f9ca24","#130f40"]
+const colors = ["#2ecc71","#e74c3c","#3498db","#FDBB2E","#130f40"]
 
 export default function Settings(){
     const context = useContext(InfoProvider);

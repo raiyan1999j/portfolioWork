@@ -1,4 +1,4 @@
-import { Caprasimo, Jost } from "next/font/google";
+import { Caprasimo } from "next/font/google";
 
 type PropsType = {
     mainHeader: string | null,
@@ -8,11 +8,6 @@ type PropsType = {
 const caprasimo = Caprasimo({
     subsets:["latin"],
     weight:['400']
-})
-
-const jost = Jost({
-    subsets:["latin"],
-    weight:["400"]
 })
 
 export default function ResuableIntro({mainHeader,subHeader}:PropsType){
@@ -25,7 +20,7 @@ export default function ResuableIntro({mainHeader,subHeader}:PropsType){
                     </h1>
                 </div>
                 <div>
-                    <h2 className={`${jost.className} text-7xl font-bold text-[var(--darkTxt,rgba(0,0,0,0.8))] capitalize`}>
+                    <h2 className={`${caprasimo.className} text-7xl font-bold text-[var(--darkTxt,rgba(0,0,0,0.8))] capitalize`}>
                         {subHeader}
                     </h2>
                 </div>
