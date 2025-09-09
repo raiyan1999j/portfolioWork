@@ -36,12 +36,12 @@ const pages = [
     {
         title:"portfolio",
         icon:<VscCode />,
-        link:"/pages/portfolio"
+        link:"/components/portfolio"
     },
     {
         title:"resume",
         icon:<IoNewspaperOutline />,
-        link:"#"
+        link:"/components/resume"
     },
     {
         title:"contact",

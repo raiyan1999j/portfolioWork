@@ -1,4 +1,4 @@
-import Settings from "./pages/settings/settings"
+import Settings from "./components/settings/settings"
 import SideNav from "./sidenav/sidenav"
 
 

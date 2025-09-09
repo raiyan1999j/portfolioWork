@@ -1,5 +1,6 @@
 import { Anton, Caprasimo, Jost } from "next/font/google"
 import { IoLogoJavascript } from "react-icons/io5"
+import ResuableIntro from "../../reusable/introduction/introduction"
 
 const activitiesData = [
     {
@@ -56,18 +57,7 @@ export default function Activites(){
     return(
         <>
         <section className="px-4 bg-[var(--darkBg)] mt-10 space-y-20">
-            <div className="relative w-[80%] h-[120px] mx-auto flex justify-center items-center">
-                <div className="absolute">
-                    <h1 className={`${caprasimo.className} text-[120px] capitalize text-transparent`} style={{WebkitTextStroke:"1px var(--darkTxt,rgba(0,0,0,0.5))"}}>
-                        what I  do
-                    </h1>
-                </div>
-                <div>
-                    <h2 className={`${jost.className} text-7xl font-bold text-[var(--darkTxt,rgba(0,0,0,0.8))]`}>
-                        Activities
-                    </h2>
-                </div>
-            </div>
+            <ResuableIntro mainHeader="what I do" subHeader="activities"/>
 
             <div className="grid grid-cols-3 gap-x-5 gap-y-10">
                 {
