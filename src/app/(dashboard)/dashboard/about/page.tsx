@@ -1,4 +1,5 @@
 "use client";
+import { CldUploadWidget } from "next-cloudinary";
 import { Anton, Jost } from "next/font/google"
 import Image from "next/image";
 import { useRef, useState } from "react";
@@ -149,12 +150,22 @@ export default function About(){
                                 infoContainer.profilePic ?
                                 <Image src={URL.createObjectURL(infoContainer.profilePic)} fill alt="profilePic"/>: null
                             }
-                            <input type="file" accept="image/*" name="profilePic" id="profileUpload" className="hidden" onChange={(event)=>{handleInput(event)}}/>
+                            {/* <input type="file" accept="image/*" name="profilePic" id="profileUpload" className="hidden" onChange={(event)=>{handleInput(event)}}/> */}
 
                             
-                            <span className={`text-8xl ${infoContainer.profilePic?"text-white":"text-[var(--darkDashTxt,rgba(0,0,0,0.8))]"}  hover:scale-110 active:scale-90 z-10`}>
+                            {/* <span className={`text-8xl ${infoContainer.profilePic?"text-white":"text-[var(--darkDashTxt,rgba(0,0,0,0.8))]"}  hover:scale-110 active:scale-90 z-10`}>
                                 <TbCaptureFilled />
-                            </span>
+                            </span> */}
+
+                            <CldUploadWidget signatureEndpoint={"/api/testcloud"}>
+                                {({open})=>{
+                                    return (
+                                        <button onClick={()=>open()}>
+                                            upload an Image
+                                        </button>
+                                    )
+                                }}
+                            </CldUploadWidget>
                         </label>
                 </div>
             </div>
