@@ -187,7 +187,7 @@ export default function Details(){
                         </span>
 
                         <span>
-                            <a href="https://github.com/raiyan1999j" className={`${jost.className} text-[var(--darkTxt,rgba(0,0,0,0.8))] transition-all duration-150 ease-linear group-hover/socialLink:text-[var(--combineColor)]`}>
+                            <a href="https://github.com/raiyan1999j" className={`${jost.className} text-[var(--darkTxt,rgba(0,0,0,0.8))] transition-all duration-150 ease-linear group-hover/socialLink:text-[var(--combineColor)]`} target="_blank">
                                 github.com
                             </a>
                         </span>
