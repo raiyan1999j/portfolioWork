@@ -9,13 +9,13 @@ type Children = {
 export default function ClientLayout({children}:Children){
     return(
         <>
-        <section className="bg-[var(--darkBg)]">
+        <section className="">
             <div className="grid grid-cols-12 w-full">
                 <div className="col-span-3">
                     <SideNav/>
                 </div>
 
-                <div className="col-span-9 bg-[var(--darkBg)] h-full w-full">
+                <div className="col-span-9 bg-[var(--darkBg,white)] h-screen w-full">
                     <Settings/>
                     {children}
                 </div>

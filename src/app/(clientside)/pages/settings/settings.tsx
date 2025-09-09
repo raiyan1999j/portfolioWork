@@ -16,7 +16,7 @@ export default function Settings(){
     const [modeSwap,setSwap] = useState(false);
     return(
         <>
-        <section className={`fixed ${collapse?"right-0":"right-[-15%]"} top-[45%] transition-all duration-200 ease-linear z-50 `}>
+        <section className={`fixed ${collapse?"right-0":"right-[-15%]"} top-[45%] transition-all duration-200 ease-linear z-50 bg-[var(--darkBg,white)] rounded-lg`}>
             <div className="flex flex-row p-2.5 w-[200px] shadow-[0px_0px_2px_black]/20 rounded-xl relative shadow-[0px_2px_4px_rgba(0,0,0,0.2)]">
                 <div className="flex flex-row flex-wrap gap-x-2 gap-y-2 w-[80%] relative after:absolute after:h-[50%] after:w-[1px] after:bg-black/20 after:right-2 after:top-[25%]">
                     {

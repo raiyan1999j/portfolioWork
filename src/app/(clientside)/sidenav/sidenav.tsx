@@ -36,7 +36,7 @@ const pages = [
     {
         title:"portfolio",
         icon:<VscCode />,
-        link:"#"
+        link:"/pages/portfolio"
     },
     {
         title:"resume",
