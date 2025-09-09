@@ -13,7 +13,6 @@ export default function Settings(){
 
     const {setCombine,setModeEnable,darkMode} = context;
     const [collapse,setCollapse] = useState<boolean>(false);
-    const [modeSwap,setSwap] = useState(false);
     return(
         <>
         <section className={`fixed ${collapse?"right-0":"right-[-15%]"} top-[45%] transition-all duration-200 ease-linear z-50 bg-[var(--darkBg,white)] rounded-lg`}>

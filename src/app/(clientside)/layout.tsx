@@ -15,7 +15,7 @@ export default function ClientLayout({children}:Children){
                     <SideNav/>
                 </div>
 
-                <div className="col-span-9 bg-[var(--darkBg,white)] h-screen w-full">
+                <div className="col-span-9 bg-[var(--darkBg,white)] h-full w-full">
                     <Settings/>
                     {children}
                 </div>
