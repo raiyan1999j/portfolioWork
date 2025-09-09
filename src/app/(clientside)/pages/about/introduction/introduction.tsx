@@ -87,6 +87,8 @@ export default function Introduction(){
                     </div>
                 </div>
             </div>
+
+            <span className="block h-[1px] w-full bg-black/20 mt-[120px]"></span>
         </section>
         </>
     )
