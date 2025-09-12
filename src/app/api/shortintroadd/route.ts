@@ -2,7 +2,7 @@ import { NextRequest, NextResponse } from "next/server";
 import { PrismaClient } from "../../../../generated/prisma";
 import cloudinary from "@/lib/cloudinaryconfig";
 
-type RefactorType = {
+export type RefactorType = {
     intro: string | null,
     skills: string[] | null,
     bio: string | null,
@@ -16,6 +16,7 @@ export async function POST(req:NextRequest){
     const retrieve = [...formData.entries()];
     const profilepic = formData.get("profilepic");
 
+    // reformate the data in typical object
     const refactor = retrieve.reduce((acc,current)=>{
         const [key,value] = current;
 

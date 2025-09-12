@@ -72,6 +72,17 @@ export default function About(){
         onSuccess:()=>{queryClient.invalidateQueries({queryKey:["shortIntro"]})}
     });
 
+    const updateIntro = useMutation({
+        mutationFn:async(formData:FormData)=>{
+            const putData = await axios.put("/api/shortintroupdate",formData);
+            const response = putData;
+
+            return response;
+        },
+
+        onSuccess:()=>{queryClient.invalidateQueries({queryKey:["shortIntro"]})}
+    })
+
     const handleInput=(event:React.ChangeEvent<HTMLInputElement>)=>{
         const {name,value,files} = event.target;
 
@@ -135,8 +146,34 @@ export default function About(){
         addIntro.mutate(formData);
     }
 
-    const introUpdate=()=>{
+    const introUpdate=(idNum:string)=>{
+        const copy = {
+            id:idNum,
+            intro: infoContainer.intro,
+            skills: infoContainer.skillList,
+            bio: infoContainer.bio,
+            profilepic: infoContainer.profilePic,
+            previouspic: infoContainer.previousPic
+        }
+        const formData = new FormData();
 
+        Object.entries(copy).forEach(([key,value])=>{
+            if(typeof value == "string"){
+                formData.append(key,value)
+            }
+
+            if(value instanceof File){
+                formData.append(key,value)
+            }
+
+            if(Array.isArray(value)){
+                value.forEach((items,index)=>{
+                    formData.append(`skills${index}`,items)
+                })
+            }
+        });
+
+        updateIntro.mutate(formData)
     }
     return(
         <>
@@ -240,7 +277,7 @@ export default function About(){
             <div>
                 {
                     data?
-                    <button className={`${jost.className} text-xl font-semibold px-4 py-1 rounded-xl bg-[#3498db] text-white transition-all duration-200 ease-linear hover:bg-[#2980b9] hover:cursor-pointer`} onClick={introUpdate}>
+                    <button className={`${jost.className} text-xl font-semibold px-4 py-1 rounded-xl bg-[#3498db] text-white transition-all duration-200 ease-linear hover:bg-[#2980b9] hover:cursor-pointer`} onClick={()=>{introUpdate(data.id)}}>
                     update info
                     </button>:
                     <button className={`${jost.className} text-xl font-semibold px-4 py-1 rounded-xl bg-[#2ecc71] text-white transition-all duration-200 ease-linear hover:bg-[#27ae60] hover:cursor-pointer`} onClick={introAdd}>
