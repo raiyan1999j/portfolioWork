@@ -9,7 +9,7 @@ datasource db {
 }
 
 model shortintro {
-  id         Int      @id(map: "shortinto_pkey") @default(autoincrement())
+  id         String   @id @default(dbgenerated("uuid_generate_v4()")) @db.Uuid
   intro      String?  @db.VarChar(250)
   skills     String[]
   bio        String?

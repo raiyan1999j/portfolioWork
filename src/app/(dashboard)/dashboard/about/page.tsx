@@ -1,20 +1,29 @@
 "use client";
-import { useMutation } from "@tanstack/react-query";
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import axios from "axios";
-import { CldUploadWidget } from "next-cloudinary";
+import { CldImage } from "next-cloudinary";
 import { Anton, Jost } from "next/font/google"
 import Image from "next/image";
-import { useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { FaBold } from "react-icons/fa";
 import { RxCross2 } from "react-icons/rx";
 import { TbCaptureFilled } from "react-icons/tb";
+
+type ShortIntroData = {
+    id:string,
+    intro:string | null,
+    skills:string[] | null,
+    bio:string,
+    profilepic: string | null
+}
 
 type InfoContainerType = {
     intro: string | null,
     skillList: string[],
     skills:string | null,
     bio: string | null,
-    profilePic: File | null
+    profilePic: File | null,
+    previousPic: string | null
 }
 
 const anton = Anton({
@@ -33,19 +42,35 @@ export default function About(){
         skillList:[],
         skills:null,
         bio:null,
-        profilePic: null
+        profilePic: null,
+        previousPic: null
     });
 
+    const queryClient = useQueryClient();
+
+    const {isLoading,isError,data} = useQuery<ShortIntroData>({
+        queryKey:["shortIntro"],
+        queryFn:async()=>{
+            const get = await axios("/api/shortintroget");
+            const data= get.data.data[0];
+
+            setContainer(prev=>({...prev,intro:data.intro,skillList:data.skills,bio:data.bio,previousPic:data.profilepic}));
+
+            editRef.current!.innerHTML = data.bio;
+
+            return data;
+        }
+    })
+    
     const addIntro = useMutation({
         mutationFn:async (formData:FormData)=>{
             const postData = await axios.post("/api/shortintroadd",formData);
             const response = postData;
 
             return response;
-        }
+        },
+        onSuccess:()=>{queryClient.invalidateQueries({queryKey:["shortIntro"]})}
     });
-
-    console.log(addIntro);
 
     const handleInput=(event:React.ChangeEvent<HTMLInputElement>)=>{
         const {name,value,files} = event.target;
@@ -109,8 +134,13 @@ export default function About(){
 
         addIntro.mutate(formData);
     }
+
+    const introUpdate=()=>{
+
+    }
     return(
         <>
+        
         <div className="grid grid-cols-3 px-10 mt-10">
             <div className="col-span-2 space-y-10">
                 <div className="space-y-2.5">
@@ -187,27 +217,20 @@ export default function About(){
 
             <div>
                 <div className="h-[407px] w-[325px] relative rounded-lg shadow-lg shadow-black/20 overflow-hidden">
-                        <label htmlFor="profileUpload" className="h-full w-full top-0 left-0 flex justify-center items-center">
+                        <label htmlFor="profileUpload" className="h-full w-full top-0 left-0 absolute flex justify-center items-center">
                             {
                                 infoContainer.profilePic ?
-                                <Image src={URL.createObjectURL(infoContainer.profilePic)} fill alt="profilePic"/>: null
+                                <Image src={URL.createObjectURL(infoContainer.profilePic)} fill alt="profilePic"/>:
+                                infoContainer.previousPic ?
+                                <CldImage fill src={infoContainer.previousPic} alt="profilepic"/> : null
                             }
+
                             <input type="file" accept="image/*" name="profilePic" id="profileUpload" className="hidden" onChange={(event)=>{handleInput(event)}}/>
 
                             
                             <span className={`text-8xl ${infoContainer.profilePic?"text-white":"text-[var(--darkDashTxt,rgba(0,0,0,0.8))]"}  hover:scale-110 active:scale-90 z-10`}>
                                 <TbCaptureFilled />
                             </span>
-
-                            {/* <CldUploadWidget signatureEndpoint={"/api/testcloud"}>
-                                {({open})=>{
-                                    return (
-                                        <button onClick={()=>open()}>
-                                            upload an Image
-                                        </button>
-                                    )
-                                }}
-                            </CldUploadWidget> */}
                         </label>
                 </div>
             </div>
@@ -215,9 +238,15 @@ export default function About(){
 
         <div className="flex flex-row justify-end mt-10 py-5">
             <div>
-                <button className={`${jost.className} text-xl font-semibold px-4 py-1 rounded-xl bg-[#2ecc71] text-white transition-all duration-200 ease-linear hover:bg-[#27ae60] hover:cursor-pointer`} onClick={introAdd}>
+                {
+                    data?
+                    <button className={`${jost.className} text-xl font-semibold px-4 py-1 rounded-xl bg-[#3498db] text-white transition-all duration-200 ease-linear hover:bg-[#2980b9] hover:cursor-pointer`} onClick={introUpdate}>
+                    update info
+                    </button>:
+                    <button className={`${jost.className} text-xl font-semibold px-4 py-1 rounded-xl bg-[#2ecc71] text-white transition-all duration-200 ease-linear hover:bg-[#27ae60] hover:cursor-pointer`} onClick={introAdd}>
                     Add the info
                 </button>
+                }
             </div>
         </div>
 
