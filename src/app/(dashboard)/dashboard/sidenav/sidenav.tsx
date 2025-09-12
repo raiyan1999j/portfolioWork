@@ -65,8 +65,7 @@ export default function Sidenav(){
             setCollapse({mainCollapse:false,menuCollapse:false})
         }
     }
-
-    console.log(pathname)
+    
     return(
         <>
         <div className={`fixed top-[20%] bg-[var(--darkDashBg,rgba(255,255,255,1))] z-40 ${collapse.mainCollapse?"left-[2%]":"left-[-4%]"} ${collapse.menuCollapse?"w-1/4":"w-[3.5%]"} h-[60vh] transition-all duration-200 ease-linear`}>

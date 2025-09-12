@@ -1,4 +1,6 @@
 "use client";
+import { useMutation } from "@tanstack/react-query";
+import axios from "axios";
 import { CldUploadWidget } from "next-cloudinary";
 import { Anton, Jost } from "next/font/google"
 import Image from "next/image";
@@ -32,7 +34,18 @@ export default function About(){
         skills:null,
         bio:null,
         profilePic: null
-    })
+    });
+
+    const addIntro = useMutation({
+        mutationFn:async (formData:FormData)=>{
+            const postData = await axios.post("/api/shortintroadd",formData);
+            const response = postData;
+
+            return response;
+        }
+    });
+
+    console.log(addIntro);
 
     const handleInput=(event:React.ChangeEvent<HTMLInputElement>)=>{
         const {name,value,files} = event.target;
@@ -66,6 +79,35 @@ export default function About(){
 
     const textEditorAction=(action:string)=>{
         document.execCommand(action,false)
+    }
+
+    const introAdd=()=>{
+        const copy = {
+            intro: infoContainer.intro,
+            skills: infoContainer.skillList,
+            bio: infoContainer.bio,
+            profilepic: infoContainer.profilePic
+        }
+
+        const formData = new FormData();
+
+        Object.entries(copy).forEach(([key,value])=>{
+            if(typeof value == "string"){
+                formData.append(key,value)
+            }
+
+            if(value instanceof File){
+                formData.append(key,value)
+            }
+
+            if(Array.isArray(value)){
+                value.forEach((items,index)=>{
+                    formData.append(`skills${index}`,items)
+                })
+            }
+        });
+
+        addIntro.mutate(formData);
     }
     return(
         <>
@@ -150,14 +192,14 @@ export default function About(){
                                 infoContainer.profilePic ?
                                 <Image src={URL.createObjectURL(infoContainer.profilePic)} fill alt="profilePic"/>: null
                             }
-                            {/* <input type="file" accept="image/*" name="profilePic" id="profileUpload" className="hidden" onChange={(event)=>{handleInput(event)}}/> */}
+                            <input type="file" accept="image/*" name="profilePic" id="profileUpload" className="hidden" onChange={(event)=>{handleInput(event)}}/>
 
                             
-                            {/* <span className={`text-8xl ${infoContainer.profilePic?"text-white":"text-[var(--darkDashTxt,rgba(0,0,0,0.8))]"}  hover:scale-110 active:scale-90 z-10`}>
+                            <span className={`text-8xl ${infoContainer.profilePic?"text-white":"text-[var(--darkDashTxt,rgba(0,0,0,0.8))]"}  hover:scale-110 active:scale-90 z-10`}>
                                 <TbCaptureFilled />
-                            </span> */}
+                            </span>
 
-                            <CldUploadWidget signatureEndpoint={"/api/testcloud"}>
+                            {/* <CldUploadWidget signatureEndpoint={"/api/testcloud"}>
                                 {({open})=>{
                                     return (
                                         <button onClick={()=>open()}>
@@ -165,7 +207,7 @@ export default function About(){
                                         </button>
                                     )
                                 }}
-                            </CldUploadWidget>
+                            </CldUploadWidget> */}
                         </label>
                 </div>
             </div>
@@ -173,7 +215,7 @@ export default function About(){
 
         <div className="flex flex-row justify-end mt-10 py-5">
             <div>
-                <button className={`${jost.className} text-xl font-semibold px-4 py-1 rounded-xl bg-[#2ecc71] text-white transition-all duration-200 ease-linear hover:bg-[#27ae60] hover:cursor-pointer`}>
+                <button className={`${jost.className} text-xl font-semibold px-4 py-1 rounded-xl bg-[#2ecc71] text-white transition-all duration-200 ease-linear hover:bg-[#27ae60] hover:cursor-pointer`} onClick={introAdd}>
                     Add the info
                 </button>
             </div>

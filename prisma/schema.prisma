@@ -1,0 +1,17 @@
+generator client {
+  provider = "prisma-client-js"
+  output   = "../generated/prisma"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model shortintro {
+  id         Int      @id(map: "shortinto_pkey") @default(autoincrement())
+  intro      String?  @db.VarChar(250)
+  skills     String[]
+  bio        String?
+  profilepic String?  @db.VarChar(250)
+}
