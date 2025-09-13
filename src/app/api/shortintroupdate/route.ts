@@ -74,7 +74,9 @@ export async function PUT(req:NextRequest){
                 bio: refactor.bio,
                 profilepic:refactor.profilepic
             }
-        })
+        });
+
+        return NextResponse.json({message:"data updated"},{status:200})
     }catch(error){
         return NextResponse.json({error})
     }
