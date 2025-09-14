@@ -5,7 +5,6 @@ import { Anton, Caprasimo, Jost } from "next/font/google";
 import Image from "next/image";
 import { useState } from "react";
 import { IoMdAdd } from "react-icons/io";
-import DashLoader from "../../loading";
 
 type RoleContainerType = {
     logo:File | null,
@@ -72,14 +71,24 @@ export default function Activities(){
         onSuccess:()=>{queryClinet.invalidateQueries({queryKey:["headLine"]})}
     });
 
+    const addRole = useMutation({
+        mutationFn:async(formData:FormData)=>{
+            const postData = await axios.post("/api/userroleadd",formData);
+            const response = postData.data;
+
+            return response;
+        }
+    })
+
     const updateHeadline = useMutation({
         mutationFn:async(formData:FormData)=>{
             const updateData = await axios.put("/api/headlineupdate",formData);
             const response = updateData.data;
 
             return response;
-        }
-    })
+        },
+        onSuccess:()=>{queryClinet.invalidateQueries({queryKey:["headLine"]})}
+    });
 
     const reusableInput=(category:string,label:string|null,type:string|null,accept:string|null,name:string|null,id:string|null,value:string|File|null)=>{
         return category == "fileCategory" ? <label htmlFor={label ?? ""} className="h-full w-full absolute flex justify-center items-center">
@@ -118,34 +127,40 @@ export default function Activities(){
 
     const headlineAdd=()=>{
         const copy = headingContainer;
-        const formData = new FormData();
 
-        Object.entries(copy).forEach(([key,value])=>{
-            if(typeof value == "string"){
-                formData.append(key,value)
-            }
-        });
-
-        addHeadline.mutate(formData)
+        formDataConverter(copy,(formData)=>addHeadline.mutate(formData));
     }
 
-    const headlineUpdate=(idNumber:string)=>{
+    const headlineUpdate=()=>{
         const copy = headingContainer;
-        const formData = new FormData();
 
-        Object.entries(copy).forEach(([key,value])=>{
-            if(typeof value == "string"){
-                formData.append(key,value)
-            }
-        });
-
-        updateHeadline.mutate(formData);
+        formDataConverter(copy,(formData)=>updateHeadline.mutate(formData))
     }
 
     const roleAdd=()=>{
+        const copy = roleContainer;
+
+        formDataConverter(copy,(formData)=>addRole.mutate(formData));
+
         setRoleArray(prev=>([...prev,roleContainer]));
 
         setRoleContainer({logo:null,title:null,description:null})
+    }
+
+    const formDataConverter=(copy:RoleContainerType|HeadingContainerType,fn:(formData:FormData)=>void)=>{
+        const formData = new FormData();
+
+        Object.entries(copy).forEach(([key,value])=>{
+            if(value instanceof File){
+                formData.append(key,value)
+            }
+
+            if(typeof value == "string"){
+                formData.append(key,value)
+            }
+        });
+
+        fn(formData)
     }
     return(
         <>
@@ -175,7 +190,7 @@ export default function Activities(){
                 {
                     headlineData?.id ?
                     <div className="mt-10">
-                    <button type="button" className={`${jost.className} text-white font-medium px-2 py-3 rounded-xl bg-[#3498db] transition-all duration-200 ease-linear hover:bg-[#2980b9] hover:cursor-pointer`} onClick={()=>{headlineUpdate(headlineData.id!)}}>
+                    <button type="button" className={`${jost.className} text-white font-medium px-2 py-3 rounded-xl bg-[#3498db] transition-all duration-200 ease-linear hover:bg-[#2980b9] hover:cursor-pointer`} onClick={headlineUpdate}>
                         update headline
                     </button>
                     </div>:

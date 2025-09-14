@@ -56,11 +56,16 @@ export default function ShortIntro(){
         queryKey:["shortIntro"],
         queryFn:async()=>{
             const get = await axios("/api/shortintroget");
-            const data= get.data.data[0];
+            const data= get.data.data[0] ?? null;
 
-            setContainer(prev=>({...prev,intro:data.intro,skillList:data.skills,bio:data.bio,previousPic:data.profilepic}));
+            if(data){
+                setContainer(prev=>({...prev,intro:data.intro,skillList:data.skills,bio:data.bio,previousPic:data.profilepic}));
 
-            editRef.current!.innerHTML = data.bio;
+                editRef.current!.innerHTML = data.bio;
+            }else{
+                setContainer({intro:null,skillList:[],skills:null,bio:null,previousPic:null,profilePic:null});
+            }
+            
 
             return data;
         }

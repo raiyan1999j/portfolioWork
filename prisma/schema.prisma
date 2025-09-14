@@ -21,3 +21,10 @@ model headline {
   mainheadline String? @db.VarChar(250)
   subheadline  String? @db.VarChar(250)
 }
+
+model userrole {
+  id          String  @id @default(dbgenerated("uuid_generate_v4()")) @db.Uuid
+  logo        String? @db.VarChar(250)
+  title       String? @db.VarChar(250)
+  description String?
+}
