@@ -1,10 +1,11 @@
 "use client";
-import { useMutation } from "@tanstack/react-query";
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import axios from "axios";
 import { Anton, Caprasimo, Jost } from "next/font/google";
 import Image from "next/image";
 import { useState } from "react";
 import { IoMdAdd } from "react-icons/io";
+import DashLoader from "../../loading";
 
 type RoleContainerType = {
     logo:File | null,
@@ -13,8 +14,9 @@ type RoleContainerType = {
 }
 
 type HeadingContainerType = {
-    mainHeadline: string | null,
-    subHeadline : string | null
+    id: string | null,
+    mainheadline: string | null,
+    subheadline : string | null
 }
 
 const caprasimo = Caprasimo({
@@ -31,9 +33,12 @@ const jost = Jost({
     subsets:["latin"]
 });
 export default function Activities(){
+    const queryClinet = useQueryClient();
+
     const [headingContainer,setHeadingContainer] = useState<HeadingContainerType>({
-        mainHeadline:null,
-        subHeadline: null
+        id: null,
+        mainheadline:null,
+        subheadline: null
     });
 
     const [roleContainer,setRoleContainer] = useState<RoleContainerType>({
@@ -44,14 +49,37 @@ export default function Activities(){
 
     const [roleArray,setRoleArray] = useState<RoleContainerType[]>([]);
 
+    const {isLoading:headlineLoad,isError:headlineError,data:headlineData} = useQuery<HeadingContainerType>({
+        queryKey:["headLine"],
+        queryFn:async()=>{
+            const getData = await axios("/api/headlineget");
+            const response= getData.data?.[0] ?? "";
+
+            setHeadingContainer({id:response.id,mainheadline:response.mainheadline,subheadline:response.subheadline});
+
+            return response;
+        }
+    })
+
     const addHeadline = useMutation({
         mutationFn:async(formData:FormData)=>{
             const postData = await axios.post("/api/headlineadd",formData);
             const response = postData.data;
 
             console.log(response);
-        }
+        },
+
+        onSuccess:()=>{queryClinet.invalidateQueries({queryKey:["headLine"]})}
     });
+
+    const updateHeadline = useMutation({
+        mutationFn:async(formData:FormData)=>{
+            const updateData = await axios.put("/api/headlineupdate",formData);
+            const response = updateData.data;
+
+            return response;
+        }
+    })
 
     const reusableInput=(category:string,label:string|null,type:string|null,accept:string|null,name:string|null,id:string|null,value:string|File|null)=>{
         return category == "fileCategory" ? <label htmlFor={label ?? ""} className="h-full w-full absolute flex justify-center items-center">
@@ -80,7 +108,7 @@ export default function Activities(){
         if(files?.[0]){
             setRoleContainer(prev=>({...prev,[name]:files[0]}))
         }else{
-            if(name == "mainHeadline" || name == "subHeadline"){
+            if(name == "mainheadline" || name == "subheadline"){
                 setHeadingContainer(prev=>({...prev,[name]:value}))
             }else{
                 setRoleContainer(prev=>({...prev,[name]:value}));
@@ -101,6 +129,19 @@ export default function Activities(){
         addHeadline.mutate(formData)
     }
 
+    const headlineUpdate=(idNumber:string)=>{
+        const copy = headingContainer;
+        const formData = new FormData();
+
+        Object.entries(copy).forEach(([key,value])=>{
+            if(typeof value == "string"){
+                formData.append(key,value)
+            }
+        });
+
+        updateHeadline.mutate(formData);
+    }
+
     const roleAdd=()=>{
         setRoleArray(prev=>([...prev,roleContainer]));
 
@@ -117,26 +158,34 @@ export default function Activities(){
         <div className="mt-5">
             <div className="flex flex-row items-center w-full gap-x-5">
                 <div className="w-[30%]">
-                    <label htmlFor="mainHeadline" className={`${anton.className} text-[var(--darkDashTxt,rgba(0,0,0,0.8))] text-xl font-semibold`}>main headline</label>
+                    <label htmlFor="mainheadline" className={`${anton.className} text-[var(--darkDashTxt,rgba(0,0,0,0.8))] text-xl font-semibold`}>main headline</label>
 
                     <div className="w-full h-[50px] mt-4">
-                        <input type="text" name="mainHeadline" id="mainHeadline" className={`${jost.className} text-[var(--darkDashTxt,rgba(0,0,0,0.8))] font-medium px-4 placeholder:text-[var(--darkDashTxt,rgba(0,0,0,0.5))] placeholder:px-4 focus:outline-none focus:border-black/40 h-full w-full border border-black/20 rounded-xl`} placeholder="main headline" onChange={(event)=>{handleInput(event)}}/>
+                        <input type="text" name="mainheadline" value={headingContainer.mainheadline ?? ""} id="mainheadline" className={`${jost.className} text-[var(--darkDashTxt,rgba(0,0,0,0.8))] font-medium px-4 placeholder:text-[var(--darkDashTxt,rgba(0,0,0,0.5))] placeholder:px-4 focus:outline-none focus:border-black/40 h-full w-full border border-black/20 rounded-xl`} placeholder="main headline" onChange={(event)=>{handleInput(event)}}/>
                     </div>
                 </div>
 
                 <div className="w-[30%]">
-                    <label htmlFor="subHeadline" className={`${anton.className} text-[var(--darkDashTxt,rgba(0,0,0,0.8))] text-xl font-semibold`}>sub headline</label>
+                    <label htmlFor="subheadline" className={`${anton.className} text-[var(--darkDashTxt,rgba(0,0,0,0.8))] text-xl font-semibold`}>sub headline</label>
 
                     <div className="w-full h-[50px] mt-4">
-                        <input type="text" name="subHeadline" id="subHeadline" className={`${jost.className} text-[var(--darkDashTxt,rgba(0,0,0,0.8))] font-medium px-4 placeholder:text-[var(--darkDashTxt,rgba(0,0,0,0.5))] placeholder:px-4 focus:outline-none focus:border-black/40 h-full w-full border border-black/20 rounded-xl`} placeholder="sub headline" onChange={(event)=>{handleInput(event)}}/>
+                        <input type="text" name="subheadline" value={headingContainer.subheadline ?? ""} id="subheadline" className={`${jost.className} text-[var(--darkDashTxt,rgba(0,0,0,0.8))] font-medium px-4 placeholder:text-[var(--darkDashTxt,rgba(0,0,0,0.5))] placeholder:px-4 focus:outline-none focus:border-black/40 h-full w-full border border-black/20 rounded-xl`} placeholder="sub headline" onChange={(event)=>{handleInput(event)}}/>
                     </div>
                 </div>
-
-                <div className="mt-10">
+                {
+                    headlineData?.id ?
+                    <div className="mt-10">
+                    <button type="button" className={`${jost.className} text-white font-medium px-2 py-3 rounded-xl bg-[#3498db] transition-all duration-200 ease-linear hover:bg-[#2980b9] hover:cursor-pointer`} onClick={()=>{headlineUpdate(headlineData.id!)}}>
+                        update headline
+                    </button>
+                    </div>:
+                    <div className="mt-10">
                     <button type="button" className={`${jost.className} text-white font-medium px-2 py-3 rounded-xl bg-[#2ecc71] transition-all duration-200 ease-linear hover:bg-[#27ae60] hover:cursor-pointer`} onClick={headlineAdd}>
                         add headline
                     </button>
                 </div>
+                }
+                
             </div>
         </div>
 
