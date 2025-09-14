@@ -1,12 +1,14 @@
 "use client";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import axios from "axios";
+import { CldImage } from "next-cloudinary";
 import { Anton, Caprasimo, Jost } from "next/font/google";
 import Image from "next/image";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { IoMdAdd } from "react-icons/io";
 
 type RoleContainerType = {
+    id:string | null,
     logo:File | null,
     title: string | null,
     description: string | null
@@ -41,6 +43,7 @@ export default function Activities(){
     });
 
     const [roleContainer,setRoleContainer] = useState<RoleContainerType>({
+        id:null,
         logo:null,
         title:null,
         description:null
@@ -52,9 +55,17 @@ export default function Activities(){
         queryKey:["headLine"],
         queryFn:async()=>{
             const getData = await axios("/api/headlineget");
-            const response= getData.data?.[0] ?? "";
+            const response= getData.data?.[0];
 
-            setHeadingContainer({id:response.id,mainheadline:response.mainheadline,subheadline:response.subheadline});
+            return response;
+        }
+    });
+
+    const {isLoading:roleLoading,isError:roleError,data:roleData} = useQuery({
+        queryKey:["userRole"],
+        queryFn:async()=>{
+            const getData = await axios("/api/userroleget");
+            const response= getData.data;
 
             return response;
         }
@@ -77,9 +88,21 @@ export default function Activities(){
             const response = postData.data;
 
             return response;
-        }
-    })
+        },
 
+        onSuccess:()=>{queryClinet.invalidateQueries({queryKey:["userRole"]})}
+    });
+
+    const removeRole= useMutation({
+        mutationFn:async(obj:{tableId:string|null,imgId:string|null})=>{
+            const deleteData = await axios.delete("/api/userroledelete",{data:obj});
+            const response = deleteData.data;
+
+            return response;
+        },
+        
+        onSuccess:()=>{queryClinet.invalidateQueries({queryKey:["userRole"]})}
+    })
     const updateHeadline = useMutation({
         mutationFn:async(formData:FormData)=>{
             const updateData = await axios.put("/api/headlineupdate",formData);
@@ -95,6 +118,8 @@ export default function Activities(){
             {
                 value instanceof File?
                 <Image fill src={URL.createObjectURL(value)} alt="logoImg"/>: 
+                typeof value == "string" ?
+                <CldImage fill src={value} alt="logo"/>:
                 null
             }
 
@@ -144,7 +169,13 @@ export default function Activities(){
 
         setRoleArray(prev=>([...prev,roleContainer]));
 
-        setRoleContainer({logo:null,title:null,description:null})
+        setRoleContainer({id:null,logo:null,title:null,description:null})
+    }
+
+    const roleRemove=(tableId:string,imgId:string|null,stateIndex:number)=>{
+        const obj = {tableId,imgId};
+
+        removeRole.mutate(obj)
     }
 
     const formDataConverter=(copy:RoleContainerType|HeadingContainerType,fn:(formData:FormData)=>void)=>{
@@ -162,6 +193,18 @@ export default function Activities(){
 
         fn(formData)
     }
+
+    useEffect(()=>{
+        if(headlineData){
+            setHeadingContainer(headlineData)
+        }
+    },[headlineData]);
+
+    useEffect(()=>{
+        if(roleData){
+            setRoleArray(roleData);
+        }
+    },[roleData])
     return(
         <>
         <div className="mt-5">
@@ -206,7 +249,7 @@ export default function Activities(){
 
         <div className="grid grid-cols-3 gap-x-5 mt-5">
             {
-                roleArray.map((items,index)=>{
+                roleArray?.map((items,index)=>{
                     return <div key={index}>
                         <div className="px-5 py-5 rounded-xl shadow-[1px_2px_5px_rgba(0,0,0,0.2),inset_-1px_0px_2px_rgba(0,0,0,0.1)] space-y-5">
                             <div>
@@ -225,11 +268,11 @@ export default function Activities(){
                         </div>
 
                         <div className="w-full flex justify-end gap-x-5 mt-5">
-                         <button type="button" className={`${jost.className} text-white font-medium px-2 py-1 rounded-xl bg-[#2ecc71] transition-all duration-200 ease-linear hover:bg-[#27ae60] hover:cursor-pointer`} onClick={roleAdd}>
+                         <button type="button" className={`${jost.className} text-white font-medium px-2 py-1 rounded-xl bg-[#3498db] transition-all duration-200 ease-linear hover:bg-[#2980b9] hover:cursor-pointer`} onClick={roleAdd}>
                             update role
                         </button>
 
-                        <button type="button" className={`${jost.className} text-white font-medium px-2 py-1 rounded-xl bg-[#2ecc71] transition-all duration-200 ease-linear hover:bg-[#27ae60] hover:cursor-pointer`} onClick={roleAdd}>
+                        <button type="button" className={`${jost.className} text-white font-medium px-2 py-1 rounded-xl bg-[#ff6b6b] transition-all duration-200 ease-linear hover:bg-[#ee5253] hover:cursor-pointer`} onClick={()=>{roleRemove(items.id!,typeof items.logo == "string" ? items.logo : null,index)}}>
                             remove role
                         </button>
             </div>

@@ -4,7 +4,7 @@ import axios from "axios";
 import { CldImage } from "next-cloudinary";
 import { Anton, Caprasimo, Jost } from "next/font/google"
 import Image from "next/image";
-import { useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { FaBold } from "react-icons/fa";
 import { RxCross2 } from "react-icons/rx";
 import { TbCaptureFilled } from "react-icons/tb";
@@ -18,6 +18,7 @@ type ShortIntroData = {
 }
 
 type InfoContainerType = {
+    id:string | null,
     intro: string | null,
     skillList: string[],
     skills:string | null,
@@ -42,6 +43,7 @@ const caprasimo = Caprasimo({
 export default function ShortIntro(){
     const editRef = useRef<HTMLDivElement|null>(null);
     const [infoContainer,setContainer] = useState<InfoContainerType>({
+        id:null,
         intro:null,
         skillList:[],
         skills:null,
@@ -56,15 +58,15 @@ export default function ShortIntro(){
         queryKey:["shortIntro"],
         queryFn:async()=>{
             const get = await axios("/api/shortintroget");
-            const data= get.data.data[0] ?? null;
+            const data= get.data.data?.[0];
 
-            if(data){
-                setContainer(prev=>({...prev,intro:data.intro,skillList:data.skills,bio:data.bio,previousPic:data.profilepic}));
+            // if(data){
+            //     setContainer(prev=>({...prev,intro:data.intro,skillList:data.skills,bio:data.bio,previousPic:data.profilepic}));
 
-                editRef.current!.innerHTML = data.bio;
-            }else{
-                setContainer({intro:null,skillList:[],skills:null,bio:null,previousPic:null,profilePic:null});
-            }
+            //     editRef.current!.innerHTML = data.bio;
+            // }else{
+            //     setContainer({intro:null,skillList:[],skills:null,bio:null,previousPic:null,profilePic:null});
+            // }
             
 
             return data;
@@ -184,6 +186,14 @@ export default function ShortIntro(){
 
         updateIntro.mutate(formData)
     }
+
+    useEffect(()=>{
+        if(data){
+            setContainer({id:data.id,intro:data.intro,skillList:data.skills ?? [],bio:data.bio,profilePic:null,previousPic:data.profilepic,skills:null});
+
+            editRef.current!.innerHTML = data.bio;
+        }
+    },[data])
     return(
         <>
         <div className="text-right mt-5">
