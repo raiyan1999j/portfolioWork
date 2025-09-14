@@ -15,3 +15,9 @@ model shortintro {
   bio        String?
   profilepic String?  @db.VarChar(250)
 }
+
+model headline {
+  id           String  @id @default(dbgenerated("uuid_generate_v4()")) @db.Uuid
+  mainheadline String? @db.VarChar(250)
+  subheadline  String? @db.VarChar(250)
+}

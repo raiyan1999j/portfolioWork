@@ -1,4 +1,6 @@
 "use client";
+import { useMutation } from "@tanstack/react-query";
+import axios from "axios";
 import { Anton, Caprasimo, Jost } from "next/font/google";
 import Image from "next/image";
 import { useState } from "react";
@@ -32,7 +34,8 @@ export default function Activities(){
     const [headingContainer,setHeadingContainer] = useState<HeadingContainerType>({
         mainHeadline:null,
         subHeadline: null
-    })
+    });
+
     const [roleContainer,setRoleContainer] = useState<RoleContainerType>({
         logo:null,
         title:null,
@@ -40,6 +43,15 @@ export default function Activities(){
     });
 
     const [roleArray,setRoleArray] = useState<RoleContainerType[]>([]);
+
+    const addHeadline = useMutation({
+        mutationFn:async(formData:FormData)=>{
+            const postData = await axios.post("/api/headlineadd",formData);
+            const response = postData.data;
+
+            console.log(response);
+        }
+    });
 
     const reusableInput=(category:string,label:string|null,type:string|null,accept:string|null,name:string|null,id:string|null,value:string|File|null)=>{
         return category == "fileCategory" ? <label htmlFor={label ?? ""} className="h-full w-full absolute flex justify-center items-center">
@@ -77,7 +89,16 @@ export default function Activities(){
     }
 
     const headlineAdd=()=>{
-        console.log(headingContainer)
+        const copy = headingContainer;
+        const formData = new FormData();
+
+        Object.entries(copy).forEach(([key,value])=>{
+            if(typeof value == "string"){
+                formData.append(key,value)
+            }
+        });
+
+        addHeadline.mutate(formData)
     }
 
     const roleAdd=()=>{
