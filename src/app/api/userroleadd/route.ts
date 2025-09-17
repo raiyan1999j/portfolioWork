@@ -3,9 +3,10 @@ import { imageUpload, refactor } from "@/lib/helper";
 import { NextRequest, NextResponse } from "next/server";
 import { PrismaClient } from "../../../../generated/prisma";
 
-type UserRoleType = {
+export type UserRoleType = {
     id: string | null,
     logo: string | null,
+    previousLogo:string|null,
     title: string | null,
     description: string | null
 }
@@ -15,11 +16,17 @@ export async function POST(req:NextRequest){
     const formData = await req.formData();
     const retrieve = [...formData.entries()];
     const logoFile = formData.get("logo");
-    const imgPublicId = await imageUpload(logoFile);
+
+    // helper function helps to rearrange data into actual obj
     const refactorData = refactor(retrieve) as UserRoleType;
 
-    refactorData.logo = imgPublicId.toString();
+    // helper function helps to manage file
+    if(logoFile){
+        const imgPublicId = await imageUpload(logoFile,null);
 
+        refactorData.logo = imgPublicId.toString();
+    }
+    
     try{
         await prisma.userrole.create({
             data:{

@@ -10,6 +10,7 @@ import { IoMdAdd } from "react-icons/io";
 type RoleContainerType = {
     id:string | null,
     logo:File | null,
+    previousLogo: string | null,
     title: string | null,
     description: string | null
 }
@@ -45,6 +46,7 @@ export default function Activities(){
     const [roleContainer,setRoleContainer] = useState<RoleContainerType>({
         id:null,
         logo:null,
+        previousLogo:null,
         title:null,
         description:null
     });
@@ -55,7 +57,7 @@ export default function Activities(){
         queryKey:["headLine"],
         queryFn:async()=>{
             const getData = await axios("/api/headlineget");
-            const response= getData.data?.[0];
+            const response= getData.data?.[0] ?? null;
 
             return response;
         }
@@ -93,16 +95,31 @@ export default function Activities(){
         onSuccess:()=>{queryClinet.invalidateQueries({queryKey:["userRole"]})}
     });
 
+    const updateRole = useMutation({
+        mutationFn:async(formData:FormData)=>{
+            const updateData = await axios.put("/api/userroleupdate",formData);
+            const response = updateData.data;
+
+            console.log(response);
+
+            return response
+        }
+    })
     const removeRole= useMutation({
         mutationFn:async(obj:{tableId:string|null,imgId:string|null})=>{
-            const deleteData = await axios.delete("/api/userroledelete",{data:obj});
+            const deleteData = await axios.delete("/api/userroledelete",{data:obj,
+            headers:{
+                "Content-Type" : "application/json"
+            }
+            });
             const response = deleteData.data;
 
             return response;
         },
         
         onSuccess:()=>{queryClinet.invalidateQueries({queryKey:["userRole"]})}
-    })
+    });
+
     const updateHeadline = useMutation({
         mutationFn:async(formData:FormData)=>{
             const updateData = await axios.put("/api/headlineupdate",formData);
@@ -113,7 +130,7 @@ export default function Activities(){
         onSuccess:()=>{queryClinet.invalidateQueries({queryKey:["headLine"]})}
     });
 
-    const reusableInput=(category:string,label:string|null,type:string|null,accept:string|null,name:string|null,id:string|null,value:string|File|null)=>{
+    const reusableInput=(category:string,label:string|null,type:string|null,accept:string|null,name:string|null,id:string|null,value:string|File|null,stateIndex:number|null)=>{
         return category == "fileCategory" ? <label htmlFor={label ?? ""} className="h-full w-full absolute flex justify-center items-center">
             {
                 value instanceof File?
@@ -123,31 +140,47 @@ export default function Activities(){
                 null
             }
 
-            <input type="file" accept="image/*" name="logo" id={id??""} className="h-full w-full absolute top-0 left-0 hidden" onChange={(event)=>{handleInput(event)}}/>
+            <input type={type??""} accept={accept ?? ""} name={name ?? ""} id={id??""} className="h-full w-full absolute top-0 left-0 hidden" onChange={(event)=>{handleInput(event,stateIndex)}}/>
 
             <span className="text-xl hover:scale-90">
                 <IoMdAdd />
             </span>
         </label>:
         category == "textCategory"?
-        <input type={type ?? ""} name={name??""} value={typeof value == "string" ? value : ""} className={`${anton.className} font-semibold capitalize text-xl text-[var(--darkTxt,rgba(0,0,0,0.8))] border-b border-b-black/20 focus:outline-none focus:border-b-black/40`} placeholder="title" onChange={(event)=>{handleInput(event)}}/>:
+        <input type={type ?? ""} name={name??""} value={typeof value == "string" ? value : ""} className={`${anton.className} font-semibold capitalize text-xl text-[var(--darkTxt,rgba(0,0,0,0.8))] border-b border-b-black/20 focus:outline-none focus:border-b-black/40`} placeholder="title" onChange={(event)=>{handleInput(event,stateIndex)}}/>:
 
-        <textarea name={name ?? ""} value={typeof value == "string" ? value : ""} className={`${jost.className} text-base text-[var(--darkTxt,rgba(0,0,0,0.8))] h-[150px] w-full border border-black/20 rounded-xl focus:outline-none focus:border-black/40 px-2 py-4`} placeholder="write short description" onChange={(event)=>{handleInput(event)}}></textarea>
+        <textarea name={name ?? ""} value={typeof value == "string" ? value : ""} className={`${jost.className} text-base text-[var(--darkTxt,rgba(0,0,0,0.8))] h-[150px] w-full border border-black/20 rounded-xl focus:outline-none focus:border-black/40 px-2 py-4`} placeholder="write short description" onChange={(event)=>{handleInput(event,stateIndex)}}></textarea>
     }
 
-    const handleInput=(event:React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>)=>{
+    const handleInput=(event:React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>,index:number|null)=>{
         const {name,value} = event.target;
+
         const files = (event.target as HTMLInputElement).files;
 
-        if(files?.[0]){
-            setRoleContainer(prev=>({...prev,[name]:files[0]}))
+        if(index !== null){
+            setRoleArray(prev=>{
+                const update = [...prev];
+
+                update[index] = {
+                    ...update[index],
+                    [name] : files?.[0] ? files[0] : value
+                }
+
+                return update;
+            })
         }else{
             if(name == "mainheadline" || name == "subheadline"){
                 setHeadingContainer(prev=>({...prev,[name]:value}))
             }else{
-                setRoleContainer(prev=>({...prev,[name]:value}));
+                if(files?.[0]){
+                    setRoleContainer(prev=>({...prev,[name]:files?.[0]}))
+                }else{
+                    setRoleContainer(prev=>({...prev,[name]:value}))
+                }
             }
         }
+
+        console.log(index);
     }
 
     const headlineAdd=()=>{
@@ -169,10 +202,15 @@ export default function Activities(){
 
         setRoleArray(prev=>([...prev,roleContainer]));
 
-        setRoleContainer({id:null,logo:null,title:null,description:null})
+        setRoleContainer({id:null,logo:null,title:null,description:null,previousLogo:null})
     }
 
-    const roleRemove=(tableId:string,imgId:string|null,stateIndex:number)=>{
+    const roleUpdate=(tableId:string|null)=>{
+        const copy = roleArray.filter(items=>items.id == tableId)[0];
+
+        formDataConverter(copy,(formData)=>{updateRole.mutate(formData)});
+    }
+    const roleRemove=(tableId:string,imgId:string|null)=>{
         const obj = {tableId,imgId};
 
         removeRole.mutate(obj)
@@ -202,7 +240,9 @@ export default function Activities(){
 
     useEffect(()=>{
         if(roleData){
-            setRoleArray(roleData);
+            const update = roleData.map((items:RoleContainerType)=>({...items,logo:null,previousLogo:items.logo}))
+
+            setRoleArray(update);
         }
     },[roleData])
     return(
@@ -219,7 +259,7 @@ export default function Activities(){
                     <label htmlFor="mainheadline" className={`${anton.className} text-[var(--darkDashTxt,rgba(0,0,0,0.8))] text-xl font-semibold`}>main headline</label>
 
                     <div className="w-full h-[50px] mt-4">
-                        <input type="text" name="mainheadline" value={headingContainer.mainheadline ?? ""} id="mainheadline" className={`${jost.className} text-[var(--darkDashTxt,rgba(0,0,0,0.8))] font-medium px-4 placeholder:text-[var(--darkDashTxt,rgba(0,0,0,0.5))] placeholder:px-4 focus:outline-none focus:border-black/40 h-full w-full border border-black/20 rounded-xl`} placeholder="main headline" onChange={(event)=>{handleInput(event)}}/>
+                        <input type="text" name="mainheadline" value={headingContainer.mainheadline ?? ""} id="mainheadline" className={`${jost.className} text-[var(--darkDashTxt,rgba(0,0,0,0.8))] font-medium px-4 placeholder:text-[var(--darkDashTxt,rgba(0,0,0,0.5))] placeholder:px-4 focus:outline-none focus:border-black/40 h-full w-full border border-black/20 rounded-xl`} placeholder="main headline" onChange={(event)=>{handleInput(event,null)}}/>
                     </div>
                 </div>
 
@@ -227,7 +267,7 @@ export default function Activities(){
                     <label htmlFor="subheadline" className={`${anton.className} text-[var(--darkDashTxt,rgba(0,0,0,0.8))] text-xl font-semibold`}>sub headline</label>
 
                     <div className="w-full h-[50px] mt-4">
-                        <input type="text" name="subheadline" value={headingContainer.subheadline ?? ""} id="subheadline" className={`${jost.className} text-[var(--darkDashTxt,rgba(0,0,0,0.8))] font-medium px-4 placeholder:text-[var(--darkDashTxt,rgba(0,0,0,0.5))] placeholder:px-4 focus:outline-none focus:border-black/40 h-full w-full border border-black/20 rounded-xl`} placeholder="sub headline" onChange={(event)=>{handleInput(event)}}/>
+                        <input type="text" name="subheadline" value={headingContainer.subheadline ?? ""} id="subheadline" className={`${jost.className} text-[var(--darkDashTxt,rgba(0,0,0,0.8))] font-medium px-4 placeholder:text-[var(--darkDashTxt,rgba(0,0,0,0.5))] placeholder:px-4 focus:outline-none focus:border-black/40 h-full w-full border border-black/20 rounded-xl`} placeholder="sub headline" onChange={(event)=>{handleInput(event,null)}}/>
                     </div>
                 </div>
                 {
@@ -254,25 +294,25 @@ export default function Activities(){
                         <div className="px-5 py-5 rounded-xl shadow-[1px_2px_5px_rgba(0,0,0,0.2),inset_-1px_0px_2px_rgba(0,0,0,0.1)] space-y-5">
                             <div>
                                 <div className="h-12 w-12 border border-black/20 rounded-lg relative overflow-hidden">
-                                    {reusableInput("fileCategory","logoupload","file","image/*","logo","logoupload",items.logo)}
+                                    {reusableInput("fileCategory",`logoupload${index}`,"file","image/*","logo",`logoupload${index}`,items.logo?items.logo:items.previousLogo,index)}
                                 </div>
                             </div>
                             <div>
                                 <div className="h-5 w-[80%]">
-                                    {reusableInput("textCategory",null,"text",null,"title",null,items.title)}
+                                    {reusableInput("textCategory",null,"text",null,"title",null,items.title,index)}
                                 </div>
                             </div>
                             <div>
-                                {reusableInput("textareaCategory",null,null,null,"description",null,items.description)}
+                                {reusableInput("textareaCategory",null,null,null,"description",null,items.description,index)}
                             </div>
                         </div>
 
                         <div className="w-full flex justify-end gap-x-5 mt-5">
-                         <button type="button" className={`${jost.className} text-white font-medium px-2 py-1 rounded-xl bg-[#3498db] transition-all duration-200 ease-linear hover:bg-[#2980b9] hover:cursor-pointer`} onClick={roleAdd}>
+                         <button type="button" className={`${jost.className} text-white font-medium px-2 py-1 rounded-xl bg-[#3498db] transition-all duration-200 ease-linear hover:bg-[#2980b9] hover:cursor-pointer`} onClick={()=>{roleUpdate(items.id)}}>
                             update role
                         </button>
 
-                        <button type="button" className={`${jost.className} text-white font-medium px-2 py-1 rounded-xl bg-[#ff6b6b] transition-all duration-200 ease-linear hover:bg-[#ee5253] hover:cursor-pointer`} onClick={()=>{roleRemove(items.id!,typeof items.logo == "string" ? items.logo : null,index)}}>
+                        <button type="button" className={`${jost.className} text-white font-medium px-2 py-1 rounded-xl bg-[#ff6b6b] transition-all duration-200 ease-linear hover:bg-[#ee5253] hover:cursor-pointer`} onClick={()=>{roleRemove(items.id!,typeof items.logo == "string" ? items.logo : null)}}>
                             remove role
                         </button>
             </div>
@@ -283,16 +323,16 @@ export default function Activities(){
             <div className="px-5 py-5 rounded-xl shadow-[1px_2px_5px_rgba(0,0,0,0.2),inset_-1px_0px_2px_rgba(0,0,0,0.1)] space-y-5">
                             <div>
                                 <div className="h-12 w-12 border border-black/20 rounded-lg relative overflow-hidden">
-                                    {reusableInput("fileCategory","logoupload","file","image/*","logo","logoupload",roleContainer.logo)}
+                                    {reusableInput("fileCategory","logoupload","file","image/*","logo","logoupload",roleContainer.logo,null)}
                                 </div>
                             </div>
                             <div>
                                 <div className="h-5 w-[80%]">
-                                    {reusableInput("textCategory",null,"text",null,"title",null,roleContainer.title)}
+                                    {reusableInput("textCategory",null,"text",null,"title",null,roleContainer.title,null)}
                                 </div>
                             </div>
                             <div>
-                                {reusableInput("textareaCategroy",null,null,null,"description",null,roleContainer.description)}
+                                {reusableInput("textareaCategroy",null,null,null,"description",null,roleContainer.description,null)}
                             </div>
             </div>
 

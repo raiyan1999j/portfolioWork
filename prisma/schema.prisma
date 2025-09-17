@@ -23,8 +23,9 @@ model headline {
 }
 
 model userrole {
-  id          String  @id @default(dbgenerated("uuid_generate_v4()")) @db.Uuid
-  logo        String? @db.VarChar(250)
-  title       String? @db.VarChar(250)
+  id          String    @id @default(dbgenerated("uuid_generate_v4()")) @db.Uuid
+  logo        String?   @db.VarChar(250)
+  title       String?   @db.VarChar(250)
   description String?
+  create_at   DateTime? @default(now()) @db.Timestamp(6)
 }

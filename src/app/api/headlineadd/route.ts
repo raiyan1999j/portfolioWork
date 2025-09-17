@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import { PrismaClient } from "../../../../generated/prisma";
+import { refactor } from "@/lib/helper";
 
 export type HeadlineType = {
     id: string | null,
@@ -12,19 +13,15 @@ const prisma = new PrismaClient();
 export async function POST(req:NextRequest){
     const formData = await req.formData();
     const retrieve = [...formData.entries()];
-    const refactor = retrieve.reduce((acc,current)=>{
-        const [key,value] = current;
-        
-        (acc as any)[key] = value;
 
-        return acc;
-    },{} as HeadlineType);
+    // helper function helps to rearrange data into actual obj
+    const refactorData = refactor(retrieve) as HeadlineType;
 
     try{
         await prisma.headline.create({
             data: {
-                mainheadline: refactor.mainheadline,
-                subheadline : refactor.subheadline
+                mainheadline: refactorData.mainheadline,
+                subheadline : refactorData.subheadline
             }
         });
 

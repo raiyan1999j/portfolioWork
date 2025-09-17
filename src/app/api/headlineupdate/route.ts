@@ -1,28 +1,25 @@
 import { NextRequest, NextResponse } from "next/server";
 import { HeadlineType } from "../headlineadd/route";
 import { PrismaClient } from "../../../../generated/prisma";
+import { refactor } from "@/lib/helper";
 
 const prisma = new PrismaClient();
 
 export async function PUT(req:NextRequest){
     const formData = await req.formData();
     const retrieve = [...formData.entries()];
-    const refactor = retrieve.reduce((acc,current)=>{
-        const [key,value] = current;
-
-        (acc as any)[key] = value;
-
-        return acc;
-    },{} as HeadlineType);
+    
+    // helper function helps to rearrange data into actual obj
+    const refactorData = refactor(retrieve) as HeadlineType;
 
     try{
         await prisma.headline.update({
             where:{
-                id:refactor.id!
+                id:refactorData.id!
             },
             data:{
-                mainheadline: refactor.mainheadline,
-                subheadline: refactor.subheadline
+                mainheadline: refactorData.mainheadline,
+                subheadline: refactorData.subheadline
             }
         });
 

@@ -16,8 +16,12 @@ export async function POST(req:NextRequest){
     const formData = await req.formData();
     const retrieve = [...formData.entries()];
     const profilepic = formData.get("profilepic");
-    const imgPublicId= await imageUpload(profilepic);
+
+    // helper function helps to rearrange data into actual obj
     const refactorData= refactor(retrieve) as RefactorType;
+
+    // helper function helps to  manage file 
+    const imgPublicId= await imageUpload(profilepic,null);
 
     refactorData.profilepic = imgPublicId.toString();
 
