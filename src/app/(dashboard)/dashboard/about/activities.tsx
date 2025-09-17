@@ -6,11 +6,22 @@ import { Anton, Caprasimo, Jost } from "next/font/google";
 import Image from "next/image";
 import { useEffect, useState } from "react";
 import { IoMdAdd } from "react-icons/io";
+import Pagination from "./pagination";
+
+type RoleDataType = {
+    userData:RoleContainerType[],
+    totalPage:number
+}
+
+type PageCofigTpe = {
+    currentPage: number,
+    offset: number
+}
 
 type RoleContainerType = {
     id:string | null,
     logo:File | null,
-    previousLogo: string | null,
+    previousLogo: string | File | null,
     title: string | null,
     description: string | null
 }
@@ -36,6 +47,11 @@ const jost = Jost({
 });
 export default function Activities(){
     const queryClinet = useQueryClient();
+
+    const [pageConfig,setPageConfig] = useState<PageCofigTpe>({
+        currentPage:1,
+        offset:0
+    });
 
     const [headingContainer,setHeadingContainer] = useState<HeadingContainerType>({
         id: null,
@@ -63,10 +79,10 @@ export default function Activities(){
         }
     });
 
-    const {isLoading:roleLoading,isError:roleError,data:roleData} = useQuery({
-        queryKey:["userRole"],
+    const {isLoading:roleLoading,isError:roleError,data:roleData} = useQuery<RoleDataType>({
+        queryKey:["userRole",pageConfig.offset],
         queryFn:async()=>{
-            const getData = await axios("/api/userroleget");
+            const getData = await axios(`/api/userroleget?skip=${pageConfig.offset}`);
             const response= getData.data;
 
             return response;
@@ -104,7 +120,8 @@ export default function Activities(){
 
             return response
         }
-    })
+    });
+
     const removeRole= useMutation({
         mutationFn:async(obj:{tableId:string|null,imgId:string|null})=>{
             const deleteData = await axios.delete("/api/userroledelete",{data:obj,
@@ -147,9 +164,9 @@ export default function Activities(){
             </span>
         </label>:
         category == "textCategory"?
-        <input type={type ?? ""} name={name??""} value={typeof value == "string" ? value : ""} className={`${anton.className} font-semibold capitalize text-xl text-[var(--darkTxt,rgba(0,0,0,0.8))] border-b border-b-black/20 focus:outline-none focus:border-b-black/40`} placeholder="title" onChange={(event)=>{handleInput(event,stateIndex)}}/>:
+        <input type={type ?? ""} name={name??""} value={typeof value == "string" ? value : ""} className={`${anton.className} font-semibold capitalize text-xl text-[var(--darkDashTxt,rgba(0,0,0,0.8))] border-b border-b-black/20 focus:outline-none focus:border-b-black/40`} placeholder="title" onChange={(event)=>{handleInput(event,stateIndex)}}/>:
 
-        <textarea name={name ?? ""} value={typeof value == "string" ? value : ""} className={`${jost.className} text-base text-[var(--darkTxt,rgba(0,0,0,0.8))] h-[150px] w-full border border-black/20 rounded-xl focus:outline-none focus:border-black/40 px-2 py-4`} placeholder="write short description" onChange={(event)=>{handleInput(event,stateIndex)}}></textarea>
+        <textarea name={name ?? ""} value={typeof value == "string" ? value : ""} className={`${jost.className} text-base text-[var(--darkDashTxt,rgba(0,0,0,0.8))] h-[150px] w-full border border-black/20 rounded-xl focus:outline-none focus:border-black/40 px-2 py-4`} placeholder="write short description" onChange={(event)=>{handleInput(event,stateIndex)}}></textarea>
     }
 
     const handleInput=(event:React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>,index:number|null)=>{
@@ -210,6 +227,7 @@ export default function Activities(){
 
         formDataConverter(copy,(formData)=>{updateRole.mutate(formData)});
     }
+
     const roleRemove=(tableId:string,imgId:string|null)=>{
         const obj = {tableId,imgId};
 
@@ -232,6 +250,12 @@ export default function Activities(){
         fn(formData)
     }
 
+    const selectCurrentPage=(page:number)=>{
+        const skip = (page * 5) === 5 ? 0 : pageConfig.currentPage * 5;
+
+        setPageConfig(prev=>({currentPage:page,offset:skip}))
+    }
+
     useEffect(()=>{
         if(headlineData){
             setHeadingContainer(headlineData)
@@ -240,7 +264,7 @@ export default function Activities(){
 
     useEffect(()=>{
         if(roleData){
-            const update = roleData.map((items:RoleContainerType)=>({...items,logo:null,previousLogo:items.logo}))
+            const update = roleData.userData.map((items:RoleContainerType)=>({...items,logo:null,previousLogo:items.logo}))
 
             setRoleArray(update);
         }
@@ -287,7 +311,7 @@ export default function Activities(){
             </div>
         </div>
 
-        <div className="grid grid-cols-3 gap-x-5 mt-5">
+        <div className="grid grid-cols-3 gap-x-5 gap-y-10 mt-5">
             {
                 roleArray?.map((items,index)=>{
                     return <div key={index}>
@@ -343,6 +367,22 @@ export default function Activities(){
             </div>
             </div>
         </div>
+
+        {
+            roleLoading?
+            <div>
+                loading will update soon...
+            </div>:
+            roleError?
+            <div>
+                error message will update soon...
+            </div>:
+            <Pagination 
+            totalPage={roleData?.totalPage ?? null}
+            currentPage={pageConfig.currentPage}
+            currentPageSelection={(value)=>{selectCurrentPage(value)}}
+            />
+        }
         </>
     )
 }
