@@ -1,7 +1,9 @@
 "use client";
+import { InfoProvider } from "@/app/contextprovider/contextprovider";
 import {Jost} from "next/font/google";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
+import { useContext } from "react";
 import { AiFillGithub, AiOutlineUser } from "react-icons/ai";
 import { BsEnvelopeAtFill } from "react-icons/bs";
 import { FaFacebookSquare, FaInstagram, FaLinkedinIn, FaRegPaperPlane, FaRegUser } from "react-icons/fa";
@@ -51,7 +53,12 @@ const pages = [
 ]
 
 export default function SideNav(){
+    const context = useContext(InfoProvider);
+
+    if(!context) throw new Error("context error");
+
     const pathname = usePathname();
+    const {setPageLoader} = context;
     return(
         <>
         <section className={`custom-scrollbar px-5 py-5 overflow-y-scroll fixed top-0 left-0 w-1/4 h-screen bg-[var(--darkBg,white)]`}>
@@ -87,8 +94,8 @@ export default function SideNav(){
             <div className="flex flex-col gap-y-5 w-[80%] mx-auto mb-10">
                 {
                     pages.map((items,index)=>{
-                        return <Link className={`${jost.className} flex flex-row gap-x-2.5 items-center w-full py-2 rounded-lg px-4  text-base font-medium capitalize hover:bg-[var(--combineColor)] hover:text-white transition-all duration-300 ease-linear ${items.link == pathname?"bg-[var(--combineColor)] text-white":"bg-transparent text-[var(--darkTxt,rgba(0,0,0,0.8))]"}`} href={items.link} key={index}>
-                            <span>
+                        return <Link className={`${jost.className}  py-2 rounded-lg px-4 flex flex-row gap-x-2.5 items-center w-full text-base font-medium capitalize hover:bg-[var(--combineColor)] hover:text-white transition-all duration-300 ease-linear ${items.link == pathname?"bg-[var(--combineColor)] text-white":"bg-transparent text-[var(--darkTxt,rgba(0,0,0,0.8))]"}`} href={items.link} onClick={()=>{setPageLoader(prev=>({...prev,clientSide:true}))}} key={index}>
+                                <span>
                                 {items.icon}
                             </span>
                             <span>

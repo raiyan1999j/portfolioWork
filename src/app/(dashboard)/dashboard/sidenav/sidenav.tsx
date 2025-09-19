@@ -1,8 +1,9 @@
 "use client";
+import { InfoProvider } from "@/app/contextprovider/contextprovider";
 import { Anton, Jost } from "next/font/google";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { useState } from "react";
+import { useContext, useState } from "react";
 import { FaAngleDoubleRight, FaRegEnvelope, FaRegUser } from "react-icons/fa";
 import { ImCross } from "react-icons/im";
 import { IoCodeWorkingOutline } from "react-icons/io5";
@@ -52,6 +53,12 @@ const anton = Anton({
     weight:'400'
 });
 export default function Sidenav(){
+    const context = useContext(InfoProvider);
+
+    if(!context) throw new Error("context error");
+
+    const {setPageLoader} = context;
+
     const pathname = usePathname();
     const [collapse,setCollapse] = useState<CollapseType>({
         mainCollapse: false,
@@ -88,7 +95,7 @@ export default function Sidenav(){
             <div className="flex flex-col gap-y-5 px-2.5 py-5">
                 {
                     menus.map((items,index)=>{
-                        return <Link href={items.link} className="flex flex-row gap-x-2.5 items-center group/items" key={index}>
+                        return <Link href={items.link} className="flex flex-row gap-x-2.5 items-center group/items" key={index} onClick={()=>{setPageLoader(prev=>({...prev,dashboard:true}))}}>
                             <div>
                                 <span className={`text-2xl  transition-all duration-150 ease-linear group-hover/items:text-[var(--combineColor)] ${items.link == pathname?"text-[var(--combineColor)]":"text-[var(--darkDashTxt,0,0,0,0.8)]"}`}>
                                     {items.icon}

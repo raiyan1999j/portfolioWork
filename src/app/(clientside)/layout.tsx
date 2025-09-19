@@ -1,4 +1,5 @@
 import Settings from "./components/settings/settings"
+import ClientLoading from "./loading"
 import SideNav from "./sidenav/sidenav"
 
 
@@ -16,6 +17,7 @@ export default function ClientLayout({children}:Children){
                 </div>
 
                 <div className="col-span-9 bg-[var(--darkBg,white)] h-full w-full">
+                    <ClientLoading/>
                     <Settings/>
                     {children}
                 </div>

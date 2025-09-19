@@ -1,4 +1,5 @@
 "use client";
+import { usePathname } from "next/navigation";
 import { createContext, useEffect, useState } from "react"
 
 type ChildrenTypes = {
@@ -8,24 +9,37 @@ type DarkModeTypes = {
     clientSide: boolean,
     dashboard : boolean
 }
+
+type PageLoaderType = {
+    clientSide : boolean,
+    dashboard : boolean
+}
 type ContextType = {
     setCombine : (color:string|null)=>void,
     setModeEnable : React.Dispatch<React.SetStateAction<DarkModeTypes>>,
-    darkMode: DarkModeTypes
+    setPageLoader: React.Dispatch<React.SetStateAction<PageLoaderType>>
+    pageLoader: PageLoaderType,
+    darkMode: DarkModeTypes,
 }
 
 export const InfoProvider = createContext<ContextType|null>(null);
 
 export default function ContextProvider({children}:ChildrenTypes){
+    const pathname = usePathname();
+
+    const [pageLoader,setPageLoader] = useState({
+        clientSide:false,
+        dashboard : false
+    })
+
     const [combineColor,setCombine] = useState<string|null>("#FDBB2E");
     
     const [darkMode,setModeEnable] = useState<DarkModeTypes>({
         clientSide:false,
         dashboard:false
-
     })
     
-    const infoContainer = {darkMode,setCombine,setModeEnable}
+    const infoContainer = {darkMode,pageLoader,setCombine,setModeEnable,setPageLoader}
 
     useEffect(()=>{
         document.documentElement.style.setProperty('--combineColor',combineColor)
@@ -45,7 +59,13 @@ export default function ContextProvider({children}:ChildrenTypes){
             document.documentElement.style.removeProperty('--darkDashBg');
             document.documentElement.style.removeProperty('--darkDashTxt');
         }
-    },[combineColor,darkMode])
+    },[combineColor,darkMode]);
+
+    useEffect(()=>{
+        if(pathname){
+            setPageLoader({clientSide:false,dashboard:false})
+        }
+    },[pathname])
     return(
         <>
         
