@@ -1,14 +1,14 @@
 "use client";
+import AlertModal from "@/app/component/ui/alertmodal";
+import { InfoProvider } from "@/app/contextprovider/contextprovider";
 import { Anton, Caprasimo } from "next/font/google";
-import { useEffect, useState } from "react";
+import { useContext, useEffect, useState } from "react";
 
 type PropsType = {
     totalPage : number | null,
     currentPage: number,
     currentPageSelection:(value:number)=>void
 }
-
-const pageNumber = [1,2,3,4,5,6,7,8];
 
 const caprasimo = Caprasimo({
     subsets:["latin"],
@@ -21,7 +21,11 @@ const anton = Anton({
 });
 
 export default function Pagination({totalPage,currentPage,currentPageSelection}:PropsType){
-    const [pageArray,setPageArray] = useState<number[]>([]);
+    const context = useContext(InfoProvider);
+
+    if(!context) throw new Error("context error");
+
+    const {handleModal} = context;
 
     return(
         <>

@@ -29,7 +29,7 @@ const menus = [
     },
     {
         title:"portfolio",
-        link:"#",
+        link:"/dashboard/portfolio",
         icon:<IoCodeWorkingOutline />
     },
     {

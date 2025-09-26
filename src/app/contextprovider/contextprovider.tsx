@@ -14,10 +14,22 @@ type PageLoaderType = {
     clientSide : boolean,
     dashboard : boolean
 }
+
+type MessageTypeInfo = "success"|"info"|"warning"|"danger"|"neural";
+
+type ModalInfoType = {
+    id: number | null,
+    messageType: MessageTypeInfo,
+    message:string
+}
+
 type ContextType = {
     setCombine : (color:string|null)=>void,
     setModeEnable : React.Dispatch<React.SetStateAction<DarkModeTypes>>,
-    setPageLoader: React.Dispatch<React.SetStateAction<PageLoaderType>>
+    setPageLoader: React.Dispatch<React.SetStateAction<PageLoaderType>>,
+    setModalInfo : React.Dispatch<React.SetStateAction<ModalInfoType[]>>,
+    handleModal : (messageType:MessageTypeInfo,message:string)=>void;
+    modalInfo: ModalInfoType[],
     pageLoader: PageLoaderType,
     darkMode: DarkModeTypes,
 }
@@ -26,6 +38,7 @@ export const InfoProvider = createContext<ContextType|null>(null);
 
 export default function ContextProvider({children}:ChildrenTypes){
     const pathname = usePathname();
+    let localCoutner = 0;
 
     const [pageLoader,setPageLoader] = useState({
         clientSide:false,
@@ -39,7 +52,20 @@ export default function ContextProvider({children}:ChildrenTypes){
         dashboard:false
     })
     
-    const infoContainer = {darkMode,pageLoader,setCombine,setModeEnable,setPageLoader}
+    const [modalInfo,setModalInfo] = useState<ModalInfoType[]>([]);
+
+    const handleModal=(messageType:MessageTypeInfo,message:string)=>{
+        const newArrivalId = Date.now() + localCoutner++;
+        const newModal = {id:newArrivalId,messageType,message};
+
+        setModalInfo(prev=>[...prev,newModal]);
+
+        setTimeout(()=>{
+            setModalInfo(prev=>prev.filter(items=>items.id !== newArrivalId))
+        },2000);
+    }
+
+    const infoContainer = {darkMode,pageLoader,modalInfo,setModalInfo,setCombine,setModeEnable,setPageLoader,handleModal}
 
     useEffect(()=>{
         document.documentElement.style.setProperty('--combineColor',combineColor)
