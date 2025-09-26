@@ -4,9 +4,10 @@ import axios from "axios";
 import { CldImage } from "next-cloudinary";
 import { Anton, Caprasimo, Jost } from "next/font/google";
 import Image from "next/image";
-import { useEffect, useState } from "react";
+import { useContext, useEffect, useState } from "react";
 import { IoMdAdd } from "react-icons/io";
 import Pagination from "./pagination";
+import { InfoProvider } from "@/app/contextprovider/contextprovider";
 
 type RoleDataType = {
     userData:RoleContainerType[],
@@ -46,6 +47,12 @@ const jost = Jost({
     subsets:["latin"]
 });
 export default function Activities(){
+    const context = useContext(InfoProvider);
+
+    if(!context) throw new Error("context error");
+
+    const {handleModal} = context;
+
     const queryClinet = useQueryClient();
 
     const [pageConfig,setPageConfig] = useState<PageCofigTpe>({
@@ -94,7 +101,13 @@ export default function Activities(){
             const postData = await axios.post("/api/headlineadd",formData);
             const response = postData.data;
 
-            console.log(response);
+            if(response.status === 200){
+                handleModal("success",response.message)
+            }else{
+                handleModal("danger",response.message);
+            }
+
+            return response;
         },
 
         onSuccess:()=>{queryClinet.invalidateQueries({queryKey:["headLine"]})}
@@ -104,6 +117,12 @@ export default function Activities(){
         mutationFn:async(formData:FormData)=>{
             const postData = await axios.post("/api/userroleadd",formData);
             const response = postData.data;
+
+            if(response.status === 200){
+                handleModal("success",response.message)
+            }else{
+                handleModal("danger",response.message);
+            }
 
             return response;
         },
@@ -116,7 +135,11 @@ export default function Activities(){
             const updateData = await axios.put("/api/userroleupdate",formData);
             const response = updateData.data;
 
-            console.log(response);
+            if(response.status === 200){
+                handleModal("info",response.message)
+            }else{
+                handleModal("danger",response.message);
+            }
 
             return response
         }
@@ -131,6 +154,12 @@ export default function Activities(){
             });
             const response = deleteData.data;
 
+            if(response.status === 200){
+                handleModal("warning",response.message)
+            }else{
+                handleModal("danger",response.message);
+            }
+
             return response;
         },
         
@@ -141,6 +170,12 @@ export default function Activities(){
         mutationFn:async(formData:FormData)=>{
             const updateData = await axios.put("/api/headlineupdate",formData);
             const response = updateData.data;
+
+            if(response.status === 200){
+                handleModal("info",response.message)
+            }else{
+                handleModal("danger",response.message);
+            }
 
             return response;
         },

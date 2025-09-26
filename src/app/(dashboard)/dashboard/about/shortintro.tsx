@@ -1,10 +1,12 @@
 "use client";
+import AlertModal from "@/app/component/ui/alertmodal";
+import { InfoProvider } from "@/app/contextprovider/contextprovider";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import axios from "axios";
 import { CldImage } from "next-cloudinary";
 import { Anton, Caprasimo, Jost } from "next/font/google"
 import Image from "next/image";
-import { useEffect, useRef, useState } from "react";
+import { useContext, useEffect, useRef, useState } from "react";
 import { FaBold } from "react-icons/fa";
 import { RxCross2 } from "react-icons/rx";
 import { TbCaptureFilled } from "react-icons/tb";
@@ -41,6 +43,11 @@ const caprasimo = Caprasimo({
     weight:["400"]
 })
 export default function ShortIntro(){
+    const context = useContext(InfoProvider);
+
+    if(!context) throw new Error("context error");
+
+    const {handleModal} = context;
     const editRef = useRef<HTMLDivElement|null>(null);
     const [infoContainer,setContainer] = useState<InfoContainerType>({
         id:null,
@@ -69,6 +76,11 @@ export default function ShortIntro(){
             const postData = await axios.post("/api/shortintroadd",formData);
             const response = postData;
 
+            if(response.status === 200){
+                handleModal("success",response.data.message)
+            }else{
+                handleModal("danger",response.data.message)
+            }
             return response;
         },
         onSuccess:()=>{queryClient.invalidateQueries({queryKey:["shortIntro"]})}
@@ -79,11 +91,16 @@ export default function ShortIntro(){
             const putData = await axios.put("/api/shortintroupdate",formData);
             const response = putData;
 
+            if(response.status === 200){
+                handleModal("info",response.data.message)
+            }else{
+                handleModal("danger",response.data.message)
+            }
             return response;
         },
 
         onSuccess:()=>{queryClient.invalidateQueries({queryKey:["shortIntro"]})}
-    })
+    });
 
     const handleInput=(event:React.ChangeEvent<HTMLInputElement>)=>{
         const {name,value,files} = event.target;
@@ -187,6 +204,7 @@ export default function ShortIntro(){
     },[data])
     return(
         <>
+        <AlertModal/>
         <div className="text-right mt-5">
             <h2 className={`${caprasimo.className} text-6xl capitalize text-[var(--darkDashTxt,rgba(0,0,0,0.8))] relative after:absolute after:h-2 after:w-[25%] after:bg-rose-500 after:bottom-[-10px] after:right-0`}>
                 provide short intro.

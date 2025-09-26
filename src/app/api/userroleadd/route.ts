@@ -38,6 +38,6 @@ export async function POST(req:NextRequest){
 
         return NextResponse.json({message:"new role added"},{status:200})
     }catch(error){
-        return NextResponse.json(error)
+        return NextResponse.json({message:"something went wrong"})
     }
 }

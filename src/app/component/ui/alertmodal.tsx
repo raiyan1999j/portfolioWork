@@ -1,29 +1,35 @@
 "use client";
 import { InfoProvider } from "@/app/contextprovider/contextprovider"
+import { Caprasimo } from "next/font/google";
 import { useContext, useEffect, useState } from "react"
 
 const messageType = [
     {
         type:"success",
-        color:"#28a745"
+        color:"#2ecc71"
     },
     {
         type:"info",
-        color:"#17a2b8"
+        color:"#3498db"
     },
     {
         type:"warning",
-        color:"#ffc107"
+        color:"#f9ca24"
     },
     {
         type:"danger",
-        color:"#dc3545"
+        color:"#eb4d4b"
     },
     {
         type:"neutral",
-        color:"#6c757d"
+        color:"#535c68"
     }
 ]
+
+const caprasimo = Caprasimo({
+    subsets:["latin"],
+    weight:["400"]
+})
 
 export default function AlertModal(){
     const context = useContext(InfoProvider);
@@ -34,9 +40,9 @@ export default function AlertModal(){
 
     return(
         <>
-        <div className="fixed bottom-0 right-[30%] w-[30%]  z-40 flex flex-col gap-y-5">
+        <div className="fixed bottom-10 right-[30%] w-[30%]  z-40 flex flex-col gap-y-5">
             {modalInfo.map((items,index)=>{
-                return <div className={`transition-all duration-150 ease-linear py-2.5 px-5 text-white rounded-xl`} style={{backgroundColor:`${messageType.filter(subItems=>subItems.type == items.messageType)[0].color}`}} key={index}>
+                return <div className={`${caprasimo.className} capitalize transition-all duration-150 ease-linear py-2.5 px-5 text-white rounded-xl`} style={{backgroundColor:`${messageType.filter(subItems=>subItems.type == items.messageType)[0].color}`}} key={index}>
                         {items.message}
                 </div>
             })}

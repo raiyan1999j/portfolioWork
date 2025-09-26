@@ -38,6 +38,6 @@ export async function PUT(req:NextRequest){
 
         return NextResponse.json({message:"data updated"},{status:200})
     }catch(error){
-        return NextResponse.json({error})
+        return NextResponse.json({message:"something went wrong"})
     }
 }

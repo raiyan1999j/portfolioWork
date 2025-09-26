@@ -29,8 +29,10 @@ export async function PUT(req:NextRequest){
                 title:refactorData.title,
                 description:refactorData.description
             },
-        })
+        });
+
+        return NextResponse.json({message:"user role updated"},{status:200})
     }catch(error){
-        return NextResponse.json(error)
+        return NextResponse.json({message:"something went wrong"})
     }
 }
