@@ -8,11 +8,11 @@ export async function DELETE(req:NextRequest){
     const body = await req.json();
     const {tableId,imgId} = body;
 
-   if(imgId){
-     await cloudinary.uploader.destroy(imgId);
-   }
-
     try{
+        if(imgId){
+            await cloudinary.uploader.destroy(imgId);
+        }
+
         await prisma.userrole.delete({
             where:{
                 id: tableId

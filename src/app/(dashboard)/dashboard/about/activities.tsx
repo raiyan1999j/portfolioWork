@@ -8,6 +8,8 @@ import { useContext, useEffect, useState } from "react";
 import { IoMdAdd } from "react-icons/io";
 import Pagination from "./pagination";
 import { InfoProvider } from "@/app/contextprovider/contextprovider";
+import DashLoading from "../../loading";
+import AlertModal from "@/app/component/ui/alertmodal";
 
 type RoleDataType = {
     userData:RoleContainerType[],
@@ -51,7 +53,7 @@ export default function Activities(){
 
     if(!context) throw new Error("context error");
 
-    const {handleModal} = context;
+    const {handleModal,setContentLoader} = context;
 
     const queryClinet = useQueryClient();
 
@@ -102,8 +104,10 @@ export default function Activities(){
             const response = postData.data;
 
             if(response.status === 200){
+                setContentLoader(prev=>({...prev,dashboard:false}));
                 handleModal("success",response.message)
             }else{
+                setContentLoader(prev=>({...prev,dashboard:false}));
                 handleModal("danger",response.message);
             }
 
@@ -119,8 +123,10 @@ export default function Activities(){
             const response = postData.data;
 
             if(response.status === 200){
+                setContentLoader(prev=>({...prev,dashboard:false}));
                 handleModal("success",response.message)
             }else{
+                setContentLoader(prev=>({...prev,dashboard:false}));
                 handleModal("danger",response.message);
             }
 
@@ -136,8 +142,10 @@ export default function Activities(){
             const response = updateData.data;
 
             if(response.status === 200){
+                setContentLoader(prev=>({...prev,dashboard:false}));
                 handleModal("info",response.message)
             }else{
+                setContentLoader(prev=>({...prev,dashboard:false}));
                 handleModal("danger",response.message);
             }
 
@@ -155,8 +163,10 @@ export default function Activities(){
             const response = deleteData.data;
 
             if(response.status === 200){
+                setContentLoader(prev=>({...prev,dashboard:false}))
                 handleModal("warning",response.message)
             }else{
+                setContentLoader(prev=>({...prev,dashboard:false}))
                 handleModal("danger",response.message);
             }
 
@@ -172,8 +182,10 @@ export default function Activities(){
             const response = updateData.data;
 
             if(response.status === 200){
+                setContentLoader(prev=>({...prev,dashboard:false}));
                 handleModal("info",response.message)
             }else{
+                setContentLoader(prev=>({...prev,dashboard:false}));
                 handleModal("danger",response.message);
             }
 
@@ -238,17 +250,22 @@ export default function Activities(){
     const headlineAdd=()=>{
         const copy = headingContainer;
 
+        setContentLoader(prev=>({...prev,dashboard:true}))
+
         formDataConverter(copy,(formData)=>addHeadline.mutate(formData));
     }
 
     const headlineUpdate=()=>{
         const copy = headingContainer;
 
+        setContentLoader(prev=>({...prev,dashboard:true}))
         formDataConverter(copy,(formData)=>updateHeadline.mutate(formData))
     }
 
     const roleAdd=()=>{
         const copy = roleContainer;
+
+        setContentLoader(prev=>({...prev,dashboard:true}))
 
         formDataConverter(copy,(formData)=>addRole.mutate(formData));
 
@@ -260,11 +277,14 @@ export default function Activities(){
     const roleUpdate=(tableId:string|null)=>{
         const copy = roleArray.filter(items=>items.id == tableId)[0];
 
+        setContentLoader(prev=>({...prev,dashboard:true}))
         formDataConverter(copy,(formData)=>{updateRole.mutate(formData)});
     }
 
     const roleRemove=(tableId:string,imgId:string|null)=>{
         const obj = {tableId,imgId};
+
+        setContentLoader(prev=>({...prev,dashboard:true}));
 
         removeRole.mutate(obj)
     }
@@ -306,6 +326,8 @@ export default function Activities(){
     },[roleData])
     return(
         <>
+        <DashLoading/>
+        <AlertModal/>
         <div className="mt-5">
             <h2 className={`${caprasimo.className} text-6xl capitalize text-[var(--darkDashTxt,rgba(0,0,0,0.8))] relative after:absolute after:h-2 after:w-[25%] after:bg-rose-500 after:bottom-[-10px] after:left-0`}>
                 Brief your role.
@@ -371,7 +393,7 @@ export default function Activities(){
                             update role
                         </button>
 
-                        <button type="button" className={`${jost.className} text-white font-medium px-2 py-1 rounded-xl bg-[#ff6b6b] transition-all duration-200 ease-linear hover:bg-[#ee5253] hover:cursor-pointer`} onClick={()=>{roleRemove(items.id!,typeof items.logo == "string" ? items.logo : null)}}>
+                        <button type="button" className={`${jost.className} text-white font-medium px-2 py-1 rounded-xl bg-[#ff6b6b] transition-all duration-200 ease-linear hover:bg-[#ee5253] hover:cursor-pointer`} onClick={()=>{roleRemove(items.id!,typeof items.previousLogo == "string" ? items.previousLogo : null)}}>
                             remove role
                         </button>
             </div>

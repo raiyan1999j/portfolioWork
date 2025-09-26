@@ -45,6 +45,7 @@ export async function imageUpload(currentImg: FormDataEntryValue | null,previous
 
         return  upload.public_id;
     }else{
-        return  null;
+        return  previousImg;
     }
 }
+

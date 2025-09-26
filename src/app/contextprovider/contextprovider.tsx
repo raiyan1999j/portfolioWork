@@ -27,10 +27,12 @@ type ContextType = {
     setCombine : (color:string|null)=>void,
     setModeEnable : React.Dispatch<React.SetStateAction<DarkModeTypes>>,
     setPageLoader: React.Dispatch<React.SetStateAction<PageLoaderType>>,
+    setContentLoader: React.Dispatch<React.SetStateAction<PageLoaderType>>,
     setModalInfo : React.Dispatch<React.SetStateAction<ModalInfoType[]>>,
     handleModal : (messageType:MessageTypeInfo,message:string)=>void;
     modalInfo: ModalInfoType[],
     pageLoader: PageLoaderType,
+    contentLoader: PageLoaderType,
     darkMode: DarkModeTypes,
 }
 
@@ -43,6 +45,11 @@ export default function ContextProvider({children}:ChildrenTypes){
     const [pageLoader,setPageLoader] = useState({
         clientSide:false,
         dashboard : false
+    });
+
+    const [contentLoader,setContentLoader] = useState({
+        clientSide:false,
+        dashboard: false
     })
 
     const [combineColor,setCombine] = useState<string|null>("#FDBB2E");
@@ -65,7 +72,7 @@ export default function ContextProvider({children}:ChildrenTypes){
         },2000);
     }
 
-    const infoContainer = {darkMode,pageLoader,modalInfo,setModalInfo,setCombine,setModeEnable,setPageLoader,handleModal}
+    const infoContainer = {darkMode,pageLoader,modalInfo,contentLoader,setModalInfo,setCombine,setModeEnable,setPageLoader,setContentLoader,handleModal}
 
     useEffect(()=>{
         document.documentElement.style.setProperty('--combineColor',combineColor)
