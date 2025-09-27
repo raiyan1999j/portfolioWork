@@ -1,7 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { HeadlineType } from "../headlineadd/route";
 import { PrismaClient } from "../../../../generated/prisma";
-import { refactor } from "@/lib/helper";
+import { refactor } from "@/lib/cloudinaryhelper";
 
 const prisma = new PrismaClient();
 

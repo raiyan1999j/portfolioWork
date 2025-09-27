@@ -1,5 +1,5 @@
 import cloudinary from "@/lib/cloudinaryconfig";
-import { imageUpload, refactor } from "@/lib/helper";
+import { imageUpload, refactor } from "@/lib/cloudinaryhelper";
 import { NextRequest, NextResponse } from "next/server";
 import { PrismaClient } from "../../../../generated/prisma";
 

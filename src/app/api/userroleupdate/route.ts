@@ -1,4 +1,4 @@
-import { imageUpload, refactor } from "@/lib/helper";
+import { imageUpload, refactor } from "@/lib/cloudinaryhelper";
 import { NextRequest, NextResponse } from "next/server";
 import { UserRoleType } from "../userroleadd/route";
 import { PrismaClient } from "../../../../generated/prisma";

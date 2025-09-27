@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import { PrismaClient } from "../../../../generated/prisma";
-import { refactor } from "@/lib/helper";
+import { refactor } from "@/lib/cloudinaryhelper";
 
 export type HeadlineType = {
     id: string | null,

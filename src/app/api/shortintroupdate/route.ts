@@ -2,7 +2,7 @@ import { NextRequest, NextResponse } from "next/server";
 import { RefactorType } from "../shortintroadd/route";
 import cloudinary from "@/lib/cloudinaryconfig";
 import { PrismaClient } from "../../../../generated/prisma";
-import { imageUpload, refactor } from "@/lib/helper";
+import { imageUpload, refactor } from "@/lib/cloudinaryhelper";
 
 type ExtendRefactor = RefactorType & {
     id: string,

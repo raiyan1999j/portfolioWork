@@ -101,14 +101,14 @@ export default function Activities(){
     const addHeadline = useMutation({
         mutationFn:async(formData:FormData)=>{
             const postData = await axios.post("/api/headlineadd",formData);
-            const response = postData.data;
+            const response = postData;
 
             if(response.status === 200){
                 setContentLoader(prev=>({...prev,dashboard:false}));
-                handleModal("success",response.message)
+                handleModal("success",response.data.message)
             }else{
                 setContentLoader(prev=>({...prev,dashboard:false}));
-                handleModal("danger",response.message);
+                handleModal("danger",response.data.message);
             }
 
             return response;
@@ -120,14 +120,14 @@ export default function Activities(){
     const addRole = useMutation({
         mutationFn:async(formData:FormData)=>{
             const postData = await axios.post("/api/userroleadd",formData);
-            const response = postData.data;
+            const response = postData;
 
             if(response.status === 200){
                 setContentLoader(prev=>({...prev,dashboard:false}));
-                handleModal("success",response.message)
+                handleModal("success",response.data.message)
             }else{
                 setContentLoader(prev=>({...prev,dashboard:false}));
-                handleModal("danger",response.message);
+                handleModal("danger",response.data.message);
             }
 
             return response;
@@ -139,14 +139,14 @@ export default function Activities(){
     const updateRole = useMutation({
         mutationFn:async(formData:FormData)=>{
             const updateData = await axios.put("/api/userroleupdate",formData);
-            const response = updateData.data;
+            const response = updateData;
 
             if(response.status === 200){
                 setContentLoader(prev=>({...prev,dashboard:false}));
-                handleModal("info",response.message)
+                handleModal("info",response.data.message)
             }else{
                 setContentLoader(prev=>({...prev,dashboard:false}));
-                handleModal("danger",response.message);
+                handleModal("danger",response.data.message);
             }
 
             return response
@@ -160,14 +160,14 @@ export default function Activities(){
                 "Content-Type" : "application/json"
             }
             });
-            const response = deleteData.data;
+            const response = deleteData;
 
             if(response.status === 200){
                 setContentLoader(prev=>({...prev,dashboard:false}))
-                handleModal("warning",response.message)
+                handleModal("warning",response.data.message)
             }else{
                 setContentLoader(prev=>({...prev,dashboard:false}))
-                handleModal("danger",response.message);
+                handleModal("danger",response.data.message);
             }
 
             return response;
@@ -179,14 +179,14 @@ export default function Activities(){
     const updateHeadline = useMutation({
         mutationFn:async(formData:FormData)=>{
             const updateData = await axios.put("/api/headlineupdate",formData);
-            const response = updateData.data;
+            const response = updateData;
 
             if(response.status === 200){
                 setContentLoader(prev=>({...prev,dashboard:false}));
-                handleModal("info",response.message)
+                handleModal("info",response.data.message)
             }else{
                 setContentLoader(prev=>({...prev,dashboard:false}));
-                handleModal("danger",response.message);
+                handleModal("danger",response.data.message);
             }
 
             return response;
