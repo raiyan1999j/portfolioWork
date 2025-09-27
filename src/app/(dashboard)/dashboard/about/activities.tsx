@@ -8,8 +8,9 @@ import { useContext, useEffect, useState } from "react";
 import { IoMdAdd } from "react-icons/io";
 import Pagination from "./pagination";
 import { InfoProvider } from "@/app/contextprovider/contextprovider";
-import DashLoading from "../../loading";
 import AlertModal from "@/app/component/ui/alertmodal";
+import CommonLoadingUi from "@/app/loading";
+import DashLoading from "../../loading";
 
 type RoleDataType = {
     userData:RoleContainerType[],
@@ -104,10 +105,10 @@ export default function Activities(){
             const response = postData;
 
             if(response.status === 200){
-                setContentLoader(prev=>({...prev,dashboard:false}));
+                setContentLoader(prev=>({...prev,dashboard:{...prev.dashboard,fullLoad:false}}));
                 handleModal("success",response.data.message)
             }else{
-                setContentLoader(prev=>({...prev,dashboard:false}));
+                setContentLoader(prev=>({...prev,dashboard:{...prev.dashboard,fullLoad:false}}));
                 handleModal("danger",response.data.message);
             }
 
@@ -123,10 +124,10 @@ export default function Activities(){
             const response = postData;
 
             if(response.status === 200){
-                setContentLoader(prev=>({...prev,dashboard:false}));
+                setContentLoader(prev=>({...prev,dashboard:{...prev.dashboard,fullLoad:false}}));
                 handleModal("success",response.data.message)
             }else{
-                setContentLoader(prev=>({...prev,dashboard:false}));
+                setContentLoader(prev=>({...prev,dashboard:{...prev.dashboard,fullLoad:false}}));
                 handleModal("danger",response.data.message);
             }
 
@@ -142,10 +143,10 @@ export default function Activities(){
             const response = updateData;
 
             if(response.status === 200){
-                setContentLoader(prev=>({...prev,dashboard:false}));
+                setContentLoader(prev=>({...prev,dashboard:{...prev.dashboard,fullLoad:false}}));
                 handleModal("info",response.data.message)
             }else{
-                setContentLoader(prev=>({...prev,dashboard:false}));
+                setContentLoader(prev=>({...prev,dashboard:{...prev.dashboard,fullLoad:false}}));
                 handleModal("danger",response.data.message);
             }
 
@@ -163,10 +164,10 @@ export default function Activities(){
             const response = deleteData;
 
             if(response.status === 200){
-                setContentLoader(prev=>({...prev,dashboard:false}))
+                setContentLoader(prev=>({...prev,dashboard:{...prev.dashboard,fullLoad:false}}));
                 handleModal("warning",response.data.message)
             }else{
-                setContentLoader(prev=>({...prev,dashboard:false}))
+                setContentLoader(prev=>({...prev,dashboard:{...prev.dashboard,fullLoad:false}}));
                 handleModal("danger",response.data.message);
             }
 
@@ -182,10 +183,10 @@ export default function Activities(){
             const response = updateData;
 
             if(response.status === 200){
-                setContentLoader(prev=>({...prev,dashboard:false}));
+                setContentLoader(prev=>({...prev,dashboard:{...prev.dashboard,fullLoad:false}}));
                 handleModal("info",response.data.message)
             }else{
-                setContentLoader(prev=>({...prev,dashboard:false}));
+                setContentLoader(prev=>({...prev,dashboard:{...prev.dashboard,fullLoad:false}}));;
                 handleModal("danger",response.data.message);
             }
 
@@ -250,7 +251,7 @@ export default function Activities(){
     const headlineAdd=()=>{
         const copy = headingContainer;
 
-        setContentLoader(prev=>({...prev,dashboard:true}))
+        setContentLoader(prev=>({...prev,dashboard:{...prev.dashboard,fullLoad:true}}));
 
         formDataConverter(copy,(formData)=>addHeadline.mutate(formData));
     }
@@ -258,14 +259,14 @@ export default function Activities(){
     const headlineUpdate=()=>{
         const copy = headingContainer;
 
-        setContentLoader(prev=>({...prev,dashboard:true}))
+        setContentLoader(prev=>({...prev,dashboard:{...prev.dashboard,fullLoad:true}}));
         formDataConverter(copy,(formData)=>updateHeadline.mutate(formData))
     }
 
     const roleAdd=()=>{
         const copy = roleContainer;
 
-        setContentLoader(prev=>({...prev,dashboard:true}))
+        setContentLoader(prev=>({...prev,dashboard:{...prev.dashboard,fullLoad:true}}));
 
         formDataConverter(copy,(formData)=>addRole.mutate(formData));
 
@@ -277,14 +278,14 @@ export default function Activities(){
     const roleUpdate=(tableId:string|null)=>{
         const copy = roleArray.filter(items=>items.id == tableId)[0];
 
-        setContentLoader(prev=>({...prev,dashboard:true}))
+        setContentLoader(prev=>({...prev,dashboard:{...prev.dashboard,fullLoad:true}}));
         formDataConverter(copy,(formData)=>{updateRole.mutate(formData)});
     }
 
     const roleRemove=(tableId:string,imgId:string|null)=>{
         const obj = {tableId,imgId};
 
-        setContentLoader(prev=>({...prev,dashboard:true}));
+        setContentLoader(prev=>({...prev,dashboard:{...prev.dashboard,fullLoad:true}}));
 
         removeRole.mutate(obj)
     }

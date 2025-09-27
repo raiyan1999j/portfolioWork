@@ -10,7 +10,7 @@ import { useContext, useEffect, useRef, useState } from "react";
 import { FaBold } from "react-icons/fa";
 import { RxCross2 } from "react-icons/rx";
 import { TbCaptureFilled } from "react-icons/tb";
-import DashLoading from "../../loading";
+import CommonLoadingUi from "@/app/loading";
 
 type ShortIntroData = {
     id:string,
@@ -78,11 +78,11 @@ export default function ShortIntro(){
             const response = postData;
 
             if(response.status === 200){
-                setContentLoader(prev=>({...prev,dashboard:false}));
+                setContentLoader(prev=>({...prev,dashboard:{...prev.dashboard,fullLoad:false}}));
 
                 handleModal("success",response.data.message)
             }else{
-                setContentLoader(prev=>({...prev,dashboard:false}))
+                setContentLoader(prev=>({...prev,dashboard:{...prev.dashboard,fullLoad:false}}));
                 handleModal("danger",response.data.message)
             }
             return response;
@@ -96,11 +96,11 @@ export default function ShortIntro(){
             const response = putData;
 
             if(response.status === 200){
-                setContentLoader(prev=>({...prev,dashboard:false}));
+                setContentLoader(prev=>({...prev,dashboard:{...prev.dashboard,fullLoad:false}}));;
 
                 handleModal("info",response.data.message)
             }else{
-                setContentLoader(prev=>({...prev,dashboard:false}))
+                setContentLoader(prev=>({...prev,dashboard:{...prev.dashboard,fullLoad:false}}));
                 handleModal("danger",response.data.message)
             }
         },
@@ -143,7 +143,7 @@ export default function ShortIntro(){
     }
 
     const introAdd=()=>{
-        setContentLoader(prev=>({...prev,dashboard:true}));
+        setContentLoader(prev=>({...prev,dashboard:{...prev.dashboard,fullLoad:true}}));
 
         const copy = {
             intro: infoContainer.intro,
@@ -174,7 +174,7 @@ export default function ShortIntro(){
     }
 
     const introUpdate=(idNum:string)=>{
-        setContentLoader(prev=>({...prev,dashboard:true}));
+        setContentLoader(prev=>({...prev,dashboard:{...prev.dashboard,fullLoad:true}}));
 
         const copy = {
             id:idNum,
@@ -214,7 +214,7 @@ export default function ShortIntro(){
     },[data])
     return(
         <>
-        <DashLoading/>
+        <CommonLoadingUi/>
         <AlertModal/>
         <div className="text-right mt-5">
             <h2 className={`${caprasimo.className} text-6xl capitalize text-[var(--darkDashTxt,rgba(0,0,0,0.8))] relative after:absolute after:h-2 after:w-[25%] after:bg-rose-500 after:bottom-[-10px] after:right-0`}>

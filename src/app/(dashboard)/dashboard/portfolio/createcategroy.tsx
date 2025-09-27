@@ -1,7 +1,7 @@
 "use client";
 import AlertModal from "@/app/component/ui/alertmodal";
 import { formDataConverter } from "@/lib/helper";
-import { useMutation } from "@tanstack/react-query";
+import { useMutation, useQueryClient } from "@tanstack/react-query";
 import axios from "axios";
 import { Anton, Caprasimo, Jost } from "next/font/google";
 import { useContext, useState } from "react";
@@ -29,6 +29,7 @@ export default function CreateCategory(){
 
     const {handleModal,setContentLoader} = context;
 
+    const queryClinet = useQueryClient();
     const [inputData,setInputData] = useState<{title:string|null}>({
         title: null
     });
@@ -46,7 +47,9 @@ export default function CreateCategory(){
                 handleModal("danger",response.data.message)
             }
             return response;
-        }
+        },
+
+        onSuccess:()=>{queryClinet.invalidateQueries({queryKey:["categoryData"]})}
     })
 
     const formHandler=(event: { preventDefault: () => void; })=>{

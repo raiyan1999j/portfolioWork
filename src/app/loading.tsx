@@ -1,10 +1,22 @@
+"use client";
+import { useContext } from "react"
+import { InfoProvider } from "./contextprovider/contextprovider";
 
-export default function DashLoader(){
-    return(
+export default function CommonLoadingUi(){
+    const context = useContext(InfoProvider);
+
+    if(!context) throw new Error("context error");
+
+    const {pageLoader} = context;
+    return( 
         <>
-        <section className="fixed top-0 left-0 h-full w-screen flex justify-center items-center">
-            <div className="loader"></div>
-        </section>
+        {
+            pageLoader.dashboard || pageLoader.clientSide?
+            <div className={`fixed top-0 left-0 h-full w-screen flex justify-center items-center bg-white/80 z-50`}>
+                <div className="loader"></div>
+            </div>:
+            null
+        }
         </>
     )
 }

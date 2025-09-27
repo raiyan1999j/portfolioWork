@@ -1,6 +1,6 @@
+import CommonLoadingUi from "../loading"
 import Header from "./dashboard/header/header"
 import Sidenav from "./dashboard/sidenav/sidenav"
-import DashLoading from "./loading"
 
 type ChildrenType = {
     children: React.ReactNode
@@ -18,7 +18,7 @@ export default function DashboarLayout({children}:ChildrenType){
         </section>
 
         <section className="h-full w-full bg-[var(--darkDashBg,white)] py-[68px] px-10">
-            <DashLoading/>
+            <CommonLoadingUi/>
             {children}
         </section>
         </>

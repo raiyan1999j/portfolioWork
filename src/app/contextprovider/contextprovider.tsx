@@ -15,6 +15,14 @@ type PageLoaderType = {
     dashboard : boolean
 }
 
+type ContentLoaderType = {
+    clientSide:boolean,
+    dashboard:{
+        fullLoad:boolean,
+        partialLoad:boolean
+    }
+}
+
 type MessageTypeInfo = "success"|"info"|"warning"|"danger"|"neural";
 
 type ModalInfoType = {
@@ -27,12 +35,12 @@ type ContextType = {
     setCombine : (color:string|null)=>void,
     setModeEnable : React.Dispatch<React.SetStateAction<DarkModeTypes>>,
     setPageLoader: React.Dispatch<React.SetStateAction<PageLoaderType>>,
-    setContentLoader: React.Dispatch<React.SetStateAction<PageLoaderType>>,
+    setContentLoader: React.Dispatch<React.SetStateAction<ContentLoaderType>>,
     setModalInfo : React.Dispatch<React.SetStateAction<ModalInfoType[]>>,
     handleModal : (messageType:MessageTypeInfo,message:string)=>void;
     modalInfo: ModalInfoType[],
     pageLoader: PageLoaderType,
-    contentLoader: PageLoaderType,
+    contentLoader: ContentLoaderType,
     darkMode: DarkModeTypes,
 }
 
@@ -49,7 +57,10 @@ export default function ContextProvider({children}:ChildrenTypes){
 
     const [contentLoader,setContentLoader] = useState({
         clientSide:false,
-        dashboard: false
+        dashboard: {
+            fullLoad:false,
+            partialLoad:false
+        }
     })
 
     const [combineColor,setCombine] = useState<string|null>("#FDBB2E");
