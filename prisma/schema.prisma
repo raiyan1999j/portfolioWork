@@ -31,6 +31,7 @@ model userrole {
 }
 
 model category {
-  id    String  @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
-  title String? @db.VarChar(250)
+  id         String    @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  title      String?   @db.VarChar(250)
+  created_at DateTime? @default(now()) @db.Timestamptz(6)
 }

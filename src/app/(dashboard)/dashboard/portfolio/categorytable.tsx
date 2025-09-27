@@ -1,12 +1,14 @@
 "use client";
-import { useQuery } from "@tanstack/react-query";
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import axios from "axios";
 import { Anton, Caprasimo, Jost } from "next/font/google";
 import DashLoading from "../../loading";
-import { useContext, useEffect } from "react";
+import { useContext, useEffect, useState } from "react";
 import { InfoProvider } from "@/app/contextprovider/contextprovider";
 import { AiFillEdit } from "react-icons/ai";
 import { MdOutlineAssignment, MdOutlineDelete } from "react-icons/md";
+import { FaCheck } from "react-icons/fa";
+import { formDataConverter } from "@/lib/helper";
 
 type CategoryData = {
     id:string,
@@ -27,12 +29,17 @@ const jost = Jost({
     subsets:["latin"]
 })
 
-export default function CategroyTable(){
+export default function CategoryTable(){
     const context = useContext(InfoProvider);
 
     if(!context) throw new Error("context error");
 
-    const {setContentLoader} = context;
+    const {setContentLoader,handleModal} = context;
+
+    const querylient = useQueryClient();
+
+    const [editArray,setEditArray] = useState<number[]>([]);
+    const [categoryData,setCategoryData] = useState<{id:string,title:string|null}[]>([]);
 
     const {isLoading,isError,data} = useQuery<CategoryData[]>({
         queryKey:["categoryData"],
@@ -45,7 +52,55 @@ export default function CategroyTable(){
             return response;
         }
     });
+
+    const updateCategory = useMutation({
+        mutationFn:async(formData:FormData)=>{
+            const putData = await axios.put("/api/categoryupdate",formData);
+            const response= putData;
+
+            if(response.status === 200){
+                setContentLoader(prev=>({...prev,dashboard:{...prev.dashboard,fullLoad:false}}))
+                handleModal("info",response.data.message);
+            }else{
+                setContentLoader(prev=>({...prev,dashboard:{...prev.dashboard,fullLoad:false}}))
+                handleModal("danger",response.data.message)
+            }
+        },
+
+        onSuccess:()=>{querylient.invalidateQueries({queryKey:["categoryData"]})}
+    })
     
+    const categoryUpdate=(indexNum:number)=>{
+            if(editArray.includes(indexNum)){
+                const copy = categoryData[indexNum];
+
+                formDataConverter(copy,(formData:FormData)=>{updateCategory.mutate(formData)});
+
+                setContentLoader(prev=>({...prev,dashboard:{...prev.dashboard,fullLoad:true}}))
+                setEditArray(prev=>prev.filter(items=>items !== indexNum));
+            }else{
+                setEditArray(prev=>([...prev,indexNum]))
+            }
+    }
+
+    const inputHandler=(event:React.ChangeEvent<HTMLInputElement>,id:number)=>{
+        const {name,value} = event.target;
+
+        setCategoryData(prev=>prev.map((items,index)=>{
+            if(index === id){
+                return {...items,[name]:value}
+            }
+
+            return {...items}
+        }))
+    }
+
+    useEffect(()=>{
+        if(data){
+            setCategoryData(data)
+        }
+    },[data])
+
     useEffect(()=>{
         setContentLoader(prev=>({...prev,dashboard:{...prev.dashboard,partialLoad:true}}));
     },[])
@@ -86,19 +141,28 @@ export default function CategroyTable(){
                         </tr>
                     </thead>
                     <tbody>
-                        {data.map((items,index)=>{
+                        {categoryData.map((items,index)=>{
                             return <tr key={index} className={`${jost.className} text-[#2ecc71]/80 font-medium even:bg-[#2ecc71]/20 transition-all duration-150 ease-linear hover:text-[#27ae60] hover:font-bold`}>
                                 <td className="py-2.5 text-center">
                                     {index + 1}
                                 </td>
                                 <td className="py-2.5 text-center">
-                                    {items.title}
+                                    {
+                                        editArray.includes(index) ?
+                                        <input type="text" name="title" value={items.title??""} className="border-b border-b-[#2ecc71]/20 px-2 focus:outline-none focus:border-b-[#2ecc71]" autoComplete="off" onChange={(event)=>{inputHandler(event,index)}}/>:
+                                        items.title
+                                    }
                                 </td>
                                 <td className="flex flex-row justify-center items-center w-full py-2.5 gap-x-10 text-2xl text-gray-500">
-                                    <button className="transition-all duration-150 ease-linear hover:text-[#27ae60] hover:scale-125">
+                                    {
+                                        editArray.includes(index) ?
+                                        <button className="transition-all duration-150 ease-linear hover:text-[#3498db] hover:scale-125" onClick={()=>{categoryUpdate(index)}}>
+                                            <FaCheck />
+                                        </button>:
+                                        <button className="transition-all duration-150 ease-linear hover:text-[#27ae60] hover:scale-125" onClick={()=>{categoryUpdate(index)}}>
                                         <AiFillEdit />
-                                    </button>
-
+                                        </button>
+                                    }
                                     <button className="transition-all duration-150 ease-linear hover:text-[#27ae60] hover:scale-125">
                                         <MdOutlineAssignment />
                                     </button>

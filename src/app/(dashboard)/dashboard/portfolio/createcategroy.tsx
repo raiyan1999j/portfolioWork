@@ -40,10 +40,10 @@ export default function CreateCategory(){
             const response = postData;
             
             if(response.status === 200){
-                setContentLoader(prev=>({...prev,dashboard:false}));
+                setContentLoader(prev=>({...prev,dashboard:{...prev.dashboard,fullLoad:false}}));
                 handleModal("success",response.data.message);
             }else{
-                setContentLoader(prev=>({...prev,dashboard:false}))
+                setContentLoader(prev=>({...prev,dashboard:{...prev.dashboard,fullLoad:false}}))
                 handleModal("danger",response.data.message)
             }
             return response;
@@ -55,7 +55,7 @@ export default function CreateCategory(){
     const formHandler=(event: { preventDefault: () => void; })=>{
         event.preventDefault();
 
-        setContentLoader(prev=>({...prev,dashboard:true}));
+        setContentLoader(prev=>({...prev,dashboard:{...prev.dashboard,fullLoad:true}}));
 
         formDataConverter(inputData,(formData:FormData)=>addCategroy.mutate(formData));
 
