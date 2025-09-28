@@ -9,6 +9,7 @@ import { AiFillEdit } from "react-icons/ai";
 import { MdOutlineAssignment, MdOutlineDelete } from "react-icons/md";
 import { FaCheck } from "react-icons/fa";
 import { formDataConverter } from "@/lib/helper";
+import { useRouter } from "next/navigation";
 
 type CategoryData = {
     id:string,
@@ -34,10 +35,11 @@ export default function CategoryTable(){
 
     if(!context) throw new Error("context error");
 
-    const {setContentLoader,handleModal} = context;
+    const {setPageLoader,setContentLoader,handleModal} = context;
 
     const querylient = useQueryClient();
 
+    const router = useRouter();
     const [editArray,setEditArray] = useState<number[]>([]);
     const [categoryData,setCategoryData] = useState<{id:string,title:string|null}[]>([]);
 
@@ -163,7 +165,10 @@ export default function CategoryTable(){
                                         <AiFillEdit />
                                         </button>
                                     }
-                                    <button className="transition-all duration-150 ease-linear hover:text-[#27ae60] hover:scale-125">
+                                    <button className="transition-all duration-150 ease-linear hover:text-[#27ae60] hover:scale-125" onClick={()=>{
+                                        router.push(`/dashboard/projectview/${items.id}`)
+                                        setPageLoader(prev=>({...prev,dashboard:true}))
+                                        }}>
                                         <MdOutlineAssignment />
                                     </button>
 
