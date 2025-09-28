@@ -9,8 +9,8 @@ import { IoMdAdd } from "react-icons/io";
 import Pagination from "./pagination";
 import { InfoProvider } from "@/app/contextprovider/contextprovider";
 import AlertModal from "@/app/component/ui/alertmodal";
-import CommonLoadingUi from "@/app/loading";
 import DashLoading from "../../loading";
+import { formDataConverter } from "@/lib/helper";
 
 type RoleDataType = {
     userData:RoleContainerType[],
@@ -288,22 +288,6 @@ export default function Activities(){
         setContentLoader(prev=>({...prev,dashboard:{...prev.dashboard,fullLoad:true}}));
 
         removeRole.mutate(obj)
-    }
-
-    const formDataConverter=(copy:RoleContainerType|HeadingContainerType,fn:(formData:FormData)=>void)=>{
-        const formData = new FormData();
-
-        Object.entries(copy).forEach(([key,value])=>{
-            if(value instanceof File){
-                formData.append(key,value)
-            }
-
-            if(typeof value == "string"){
-                formData.append(key,value)
-            }
-        });
-
-        fn(formData)
     }
 
     const selectCurrentPage=(page:number)=>{
