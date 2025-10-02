@@ -10,6 +10,9 @@ import { MdOutlineAssignment, MdOutlineDelete } from "react-icons/md";
 import { FaCheck } from "react-icons/fa";
 import { formDataConverter } from "@/lib/helper";
 import { useRouter } from "next/navigation";
+import ProjectTable from "./projecttable";
+import { IoIosEye } from "react-icons/io";
+import { FaEyeLowVision } from "react-icons/fa6";
 
 type CategoryData = {
     id:string,
@@ -42,8 +45,9 @@ export default function CategoryTable(){
     const router = useRouter();
     const [editArray,setEditArray] = useState<number[]>([]);
     const [categoryData,setCategoryData] = useState<{id:string,title:string|null}[]>([]);
+    const [selectedCategory,setSelecteCategory] = useState<string|null>(null);
 
-    const {isLoading,isError,data} = useQuery<CategoryData[]>({
+    const {isLoading:categoryLoad,isError:categoryError,data:category} = useQuery<CategoryData[]>({
         queryKey:["categoryData"],
         queryFn:async()=>{
             const getData = await axios("/api/categoryget");
@@ -54,6 +58,19 @@ export default function CategoryTable(){
             return response;
         }
     });
+
+    const {isLoading:projectLoad,isError:projectError,data:projectData} = useQuery({
+        queryKey:["projectData",selectedCategory],
+        queryFn:async()=>{
+            const getData = selectedCategory ? await axios(`/api/projectget?parenttable=${selectedCategory}`) : null;
+
+            const response= getData?.data ?? null;
+
+            setContentLoader(prev=>({...prev,dashboard:{...prev.dashboard,partialLoad:false}}));
+
+            return response;
+        }
+    })
 
     const updateCategory = useMutation({
         mutationFn:async(formData:FormData)=>{
@@ -76,7 +93,7 @@ export default function CategoryTable(){
             if(editArray.includes(indexNum)){
                 const copy = categoryData[indexNum];
 
-                formDataConverter(copy,(formData:FormData)=>{updateCategory.mutate(formData)});
+                formDataConverter(copy,null,(formData:FormData)=>{updateCategory.mutate(formData)});
 
                 setContentLoader(prev=>({...prev,dashboard:{...prev.dashboard,fullLoad:true}}))
                 setEditArray(prev=>prev.filter(items=>items !== indexNum));
@@ -97,11 +114,21 @@ export default function CategoryTable(){
         }))
     }
 
-    useEffect(()=>{
-        if(data){
-            setCategoryData(data)
+    const selectParenttable=(idNum:string)=>{
+        if(selectedCategory === idNum){
+            setSelecteCategory(null)
+        }else{
+            setSelecteCategory(idNum);
         }
-    },[data])
+        
+        setContentLoader(prev=>({...prev,dashboard:{...prev.dashboard,partialLoad:true}}));
+    }
+
+    useEffect(()=>{
+        if(category){
+            setCategoryData(category)
+        }
+    },[category])
 
     useEffect(()=>{
         setContentLoader(prev=>({...prev,dashboard:{...prev.dashboard,partialLoad:true}}));
@@ -117,17 +144,17 @@ export default function CategoryTable(){
         <div className="mt-20 grid grid-cols-2 gap-x-10">
             <div className="w-full rounded-xl">
                 {
-                    isLoading?
+                    categoryLoad?
                     <div className="relative h-[300px] w-full">
                         <DashLoading/>
                     </div>:
-                    isError?
+                    categoryError?
                     <div>
                         <h2>
                             error message will update soon
                         </h2>
                     </div>:
-                    data?
+                    category?
                     <table className="w-full border border-[#2ecc71]">
                     <thead className={`${anton.className} uppercase text-white bg-[#2ecc71]`}>
                         <tr>
@@ -175,6 +202,15 @@ export default function CategoryTable(){
                                     <button className="transition-all duration-150 ease-linear hover:text-[#e74c3c] hover:scale-125">
                                         <MdOutlineDelete />
                                     </button>
+                                    
+                                    <button onClick={()=>{selectParenttable(items.id)}}>
+                                        {
+                                            selectedCategory === items.id ?
+                                            <FaEyeLowVision />:
+                                            <IoIosEye />
+                                        }
+                                        
+                                    </button>
                                 </td>
                             </tr>
                         })}
@@ -186,7 +222,19 @@ export default function CategoryTable(){
             </div>
 
             <div>
-        
+                {
+                    projectLoad?
+                    <DashLoading/>:
+                    projectError?
+                    <div>
+                        <h4>
+                            error message will update soon
+                        </h4>
+                    </div>:
+                    projectData?
+                    <ProjectTable projectInfo={projectData}/>:
+                    null
+                }
             </div>
         </div>
         </>
