@@ -1,7 +1,8 @@
 import cloudinary from "@/lib/cloudinaryconfig";
-import { imageUpload, refactor } from "@/lib/cloudinaryhelper";
+import { imageUpload } from "@/lib/cloudinaryhelper";
 import { NextRequest, NextResponse } from "next/server";
 import { PrismaClient } from "../../../../generated/prisma";
+import { refactor } from "@/lib/helper";
 
 export type UserRoleType = {
     id: string | null,
@@ -18,7 +19,7 @@ export async function POST(req:NextRequest){
     const logoFile = formData.get("logo");
 
     // helper function helps to rearrange data into actual obj
-    const refactorData = refactor(retrieve) as UserRoleType;
+    const refactorData = refactor(retrieve,null) as UserRoleType;
 
     // helper function helps to manage file
     if(logoFile){

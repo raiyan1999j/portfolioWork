@@ -1,28 +1,7 @@
 import cloudinary from "./cloudinaryconfig";
 
-export function refactor<T>(obj:[string,T][]){
-    const convertData = obj.reduce((acc,current)=>{
-        const [key,value] = current;
-
-        if((/\d/).test(key)){
-            if(!acc.skills) acc.skills = [];
-
-            if(typeof value == "string"){
-                acc.skills.push(value.toString())
-            }
-        }else{
-            (acc as any)[key] = value;
-        }
-
-        return acc;
-    },{} as {skills?: string[]});
-
-    return convertData;
-}
-
 export async function imageUpload(currentImg: FormDataEntryValue | null,previousImg: FormDataEntryValue | null){
     if(currentImg instanceof File){
-
     const bytes = await currentImg.arrayBuffer();
     const buffer= Buffer.from(bytes);
 
@@ -49,3 +28,11 @@ export async function imageUpload(currentImg: FormDataEntryValue | null,previous
     }
 }
 
+export async function imgUploadArray(imgcontainer:File[]|null){
+
+    if(imgcontainer){
+        const container = await Promise.all(imgcontainer.map(async(items,index)=> await imageUpload(items,null)));
+
+        return container;
+    }
+}

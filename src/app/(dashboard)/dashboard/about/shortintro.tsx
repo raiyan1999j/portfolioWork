@@ -11,6 +11,7 @@ import { FaBold } from "react-icons/fa";
 import { RxCross2 } from "react-icons/rx";
 import { TbCaptureFilled } from "react-icons/tb";
 import CommonLoadingUi from "@/app/loading";
+import { formDataConverter } from "@/lib/helper";
 
 type ShortIntroData = {
     id:string,
@@ -80,7 +81,7 @@ export default function ShortIntro(){
             if(response.status === 200){
                 setContentLoader(prev=>({...prev,dashboard:{...prev.dashboard,fullLoad:false}}));
 
-                handleModal("success",response.data.message)
+                handleModal("success",response.data.message);
             }else{
                 setContentLoader(prev=>({...prev,dashboard:{...prev.dashboard,fullLoad:false}}));
                 handleModal("danger",response.data.message)
@@ -152,25 +153,27 @@ export default function ShortIntro(){
             profilepic: infoContainer.profilePic
         }
 
-        const formData = new FormData();
+        // const formData = new FormData();
 
-        Object.entries(copy).forEach(([key,value])=>{
-            if(typeof value == "string"){
-                formData.append(key,value)
-            }
+        // Object.entries(copy).forEach(([key,value])=>{
+        //     if(typeof value == "string"){
+        //         formData.append(key,value)
+        //     }
 
-            if(value instanceof File){
-                formData.append(key,value)
-            }
+        //     if(value instanceof File){
+        //         formData.append(key,value)
+        //     }
 
-            if(Array.isArray(value)){
-                value.forEach((items,index)=>{
-                    formData.append(`skills${index}`,items)
-                })
-            }
-        });
+        //     if(Array.isArray(value)){
+        //         value.forEach((items,index)=>{
+        //             formData.append(`skills${index}`,items)
+        //         })
+        //     }
+        // });
 
-        addIntro.mutate(formData);
+        // addIntro.mutate(formData);
+
+        formDataConverter(copy,"skills",(formData:FormData)=>{addIntro.mutate(formData)});
     }
 
     const introUpdate=(idNum:string)=>{

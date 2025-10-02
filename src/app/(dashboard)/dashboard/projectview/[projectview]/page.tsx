@@ -4,7 +4,7 @@ export default function Projectview({params}:{params:{projectview:string}}){
     const projectId = params.projectview;
     return(
         <>
-        <Details/>
+        <Details projectId={projectId}/>
         </>
     )
 }

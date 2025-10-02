@@ -1,7 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { HeadlineType } from "../headlineadd/route";
 import { PrismaClient } from "../../../../generated/prisma";
-import { refactor } from "@/lib/cloudinaryhelper";
+import { refactor } from "@/lib/helper";
 
 const prisma = new PrismaClient();
 
@@ -10,7 +10,7 @@ export async function PUT(req:NextRequest){
     const retrieve = [...formData.entries()];
     
     // helper function helps to rearrange data into actual obj
-    const refactorData = refactor(retrieve) as HeadlineType;
+    const refactorData = refactor(retrieve,null) as HeadlineType;
 
     try{
         await prisma.headline.update({

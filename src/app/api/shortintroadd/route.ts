@@ -1,7 +1,8 @@
 import { NextRequest, NextResponse } from "next/server";
 import { PrismaClient } from "../../../../generated/prisma";
 import cloudinary from "@/lib/cloudinaryconfig";
-import { imageUpload, refactor } from "@/lib/cloudinaryhelper";
+import { imageUpload } from "@/lib/cloudinaryhelper";
+import { refactor } from "@/lib/helper";
 
 export type RefactorType = {
     intro: string | null,
@@ -18,7 +19,7 @@ export async function POST(req:NextRequest){
     const profilepic = formData.get("profilepic");
 
     // helper function helps to rearrange data into actual obj
-    const refactorData= refactor(retrieve) as RefactorType;
+    const refactorData= refactor(retrieve,"skills") as RefactorType;
 
     // helper function helps to  manage file 
     const imgPublicId= await imageUpload(profilepic,null);

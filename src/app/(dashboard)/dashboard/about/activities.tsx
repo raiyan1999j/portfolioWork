@@ -253,14 +253,14 @@ export default function Activities(){
 
         setContentLoader(prev=>({...prev,dashboard:{...prev.dashboard,fullLoad:true}}));
 
-        formDataConverter(copy,(formData)=>addHeadline.mutate(formData));
+        formDataConverter(copy,null,(formData)=>addHeadline.mutate(formData));
     }
 
     const headlineUpdate=()=>{
         const copy = headingContainer;
 
         setContentLoader(prev=>({...prev,dashboard:{...prev.dashboard,fullLoad:true}}));
-        formDataConverter(copy,(formData)=>updateHeadline.mutate(formData))
+        formDataConverter(copy,null,(formData)=>updateHeadline.mutate(formData))
     }
 
     const roleAdd=()=>{
@@ -268,7 +268,7 @@ export default function Activities(){
 
         setContentLoader(prev=>({...prev,dashboard:{...prev.dashboard,fullLoad:true}}));
 
-        formDataConverter(copy,(formData)=>addRole.mutate(formData));
+        formDataConverter(copy,null,(formData)=>addRole.mutate(formData));
 
         setRoleArray(prev=>([...prev,roleContainer]));
 
@@ -279,7 +279,7 @@ export default function Activities(){
         const copy = roleArray.filter(items=>items.id == tableId)[0];
 
         setContentLoader(prev=>({...prev,dashboard:{...prev.dashboard,fullLoad:true}}));
-        formDataConverter(copy,(formData)=>{updateRole.mutate(formData)});
+        formDataConverter(copy,null,(formData)=>{updateRole.mutate(formData)});
     }
 
     const roleRemove=(tableId:string,imgId:string|null)=>{

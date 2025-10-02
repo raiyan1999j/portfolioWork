@@ -1,7 +1,8 @@
-import { imageUpload, refactor } from "@/lib/cloudinaryhelper";
+import { imageUpload } from "@/lib/cloudinaryhelper";
 import { NextRequest, NextResponse } from "next/server";
 import { UserRoleType } from "../userroleadd/route";
 import { PrismaClient } from "../../../../generated/prisma";
+import { refactor } from "@/lib/helper";
 
 const prisma = new PrismaClient();
 
@@ -12,7 +13,7 @@ export async function PUT(req:NextRequest){
     const previousLogo= formData.get("previousLogo");
     
     // helper function helps to rearrange data into actual obj
-    const refactorData = refactor(retrieve) as UserRoleType;
+    const refactorData = refactor(retrieve,null) as UserRoleType;
 
     // helper function helps to manage file
     const imageData =await imageUpload(currentLogo,previousLogo);
