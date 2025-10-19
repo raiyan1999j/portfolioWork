@@ -1,10 +1,16 @@
 import Details from "./details";
 
-export default function Projectview({params}:{params:{projectview:string}}){
-    const projectId = params.projectview;
+type PagesProps = {
+    params: {projectview:string}
+    searchParams:{data?:string}
+}
+
+export default function Projectview({params,searchParams}:PagesProps){
+    const passedData = searchParams.data? JSON.parse(searchParams.data) : null
+
     return(
         <>
-        <Details projectId={projectId}/>
+        <Details projectInfo={passedData}/>
         </>
     )
 }

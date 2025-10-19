@@ -3,8 +3,13 @@ import { refactor } from "@/lib/helper";
 import { NextRequest, NextResponse } from "next/server";
 import { PrismaClient } from "../../../../generated/prisma";
 
+type ImgContainerType = {
+    current: File | null,
+    previous: string | null
+}
+
 type DetailsType = {
-    imgcontainer: File[] | null,
+    imgcontainer: ImgContainerType[],
     description : string | null,
     title : string | null,
     github: string | null,
@@ -16,21 +21,37 @@ const prisma = new PrismaClient();
 
 export async function POST(req:NextRequest){
     const formData = await req.formData();
-    const retrieve = [...formData.entries()];
+    const retrieve = Object.fromEntries(formData);
+    const wrap: Partial<DetailsType> = {};
 
-    const refactorData = refactor(retrieve,"imgcontainer") as DetailsType;
+    const container = Object.entries(retrieve).reduce((acc,[key,value])=>{
+        const match = key.match(/[a-zA-Z]+|\d+/g);
+        
+        if(match && match[1]){
+            const [prop,indexStr] = match;
+            const index = Number(indexStr)
 
-    const imgcontainer = await imgUploadArray(refactorData.imgcontainer);
+            acc[index] = {...acc[index],[prop]:value == "" ? null: value}
+        }else{
+            (wrap as any)[key] = value;
+        }
+
+        return acc;
+    },[] as ImgContainerType[]);
+
+    wrap.imgcontainer = container;
+
+    const imgcontainer = await imgUploadArray(wrap.imgcontainer);
 
     try{
         await prisma.project.create({
             data:{
                 imgcontainer:imgcontainer,
-                description:refactorData.description,
-                title:refactorData.title,
-                github:refactorData.github,
-                live:refactorData.live,
-                parenttable:refactorData.parenttable
+                description:wrap.description,
+                title:wrap.title,
+                github:wrap.github,
+                live:wrap.live,
+                parenttable:wrap.parenttable
             }
         });
 

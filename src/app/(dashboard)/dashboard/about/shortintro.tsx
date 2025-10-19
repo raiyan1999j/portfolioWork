@@ -153,26 +153,6 @@ export default function ShortIntro(){
             profilepic: infoContainer.profilePic
         }
 
-        // const formData = new FormData();
-
-        // Object.entries(copy).forEach(([key,value])=>{
-        //     if(typeof value == "string"){
-        //         formData.append(key,value)
-        //     }
-
-        //     if(value instanceof File){
-        //         formData.append(key,value)
-        //     }
-
-        //     if(Array.isArray(value)){
-        //         value.forEach((items,index)=>{
-        //             formData.append(`skills${index}`,items)
-        //         })
-        //     }
-        // });
-
-        // addIntro.mutate(formData);
-
         formDataConverter(copy,"skills",(formData:FormData)=>{addIntro.mutate(formData)});
     }
 

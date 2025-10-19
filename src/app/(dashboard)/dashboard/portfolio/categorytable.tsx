@@ -124,6 +124,21 @@ export default function CategoryTable(){
         setContentLoader(prev=>({...prev,dashboard:{...prev.dashboard,partialLoad:true}}));
     }
 
+    const navigatePage=(idNum:string)=>{
+        const projectData = {
+            type:"parenttable",
+            id:idNum
+        }
+
+        const searchParams = new URLSearchParams({
+            data: JSON.stringify(projectData)
+        })
+
+        router.push(`/dashboard/projectview/details?${searchParams}`);
+
+        setPageLoader(prev=>({...prev,dashboard:true}));
+    }
+
     useEffect(()=>{
         if(category){
             setCategoryData(category)
@@ -132,7 +147,7 @@ export default function CategoryTable(){
 
     useEffect(()=>{
         setContentLoader(prev=>({...prev,dashboard:{...prev.dashboard,partialLoad:true}}));
-    },[])
+    },[]);
     return(
         <>
         <div className="mt-20">
@@ -192,10 +207,7 @@ export default function CategoryTable(){
                                         <AiFillEdit />
                                         </button>
                                     }
-                                    <button className="transition-all duration-150 ease-linear hover:text-[#27ae60] hover:scale-125" onClick={()=>{
-                                        router.push(`/dashboard/projectview/${items.id}`)
-                                        setPageLoader(prev=>({...prev,dashboard:true}))
-                                        }}>
+                                    <button className="transition-all duration-150 ease-linear hover:text-[#27ae60] hover:scale-125" onClick={()=>{navigatePage(items.id)}}>
                                         <MdOutlineAssignment />
                                     </button>
 

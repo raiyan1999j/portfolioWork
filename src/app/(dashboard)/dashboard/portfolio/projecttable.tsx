@@ -1,5 +1,8 @@
 "use client";
+import { InfoProvider } from "@/app/contextprovider/contextprovider";
 import { Anton, Jost } from "next/font/google";
+import { useRouter } from "next/navigation";
+import { useContext } from "react";
 import { FaTrash } from "react-icons/fa";
 import { IoIosEye } from "react-icons/io";
 
@@ -27,6 +30,28 @@ const jost = Jost({
 })
 
 export default function ProjectTable({projectInfo}:ProjectDataType){
+    const context = useContext(InfoProvider);
+
+    if(!context) throw new Error("context error");
+
+    const {setPageLoader} = context;
+
+    const router = useRouter();
+
+    const navigatePage=(idNum:string)=>{
+        const projectData = {
+            type:"childtable",
+            id:idNum
+        }
+
+        const searchParams = new URLSearchParams({
+            data : JSON.stringify(projectData)
+        });
+
+        router.push(`/dashboard/projectview/details?${searchParams}`);
+
+        setPageLoader(prev=>({...prev,dashboard:true}));
+    }
     return(
         <>
         <div>
@@ -58,7 +83,7 @@ export default function ProjectTable({projectInfo}:ProjectDataType){
                                 </td>
 
                                 <td className="flex flex-row justify-center items-center w-full gap-x-10 text-2xl text-gray-500">
-                                    <button className="transition-all duration-150 ease-linear hover:text-[#3498db] hover:scale-125">
+                                    <button className="transition-all duration-150 ease-linear hover:text-[#3498db] hover:scale-125" onClick={()=>{navigatePage(items.id)}}>
                                         <IoIosEye />
                                     </button>
 

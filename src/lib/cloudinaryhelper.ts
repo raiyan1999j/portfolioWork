@@ -1,5 +1,10 @@
 import cloudinary from "./cloudinaryconfig";
 
+type ImgContainerTypes = {
+    current:File | null,
+    previous:string | null
+}
+
 export async function imageUpload(currentImg: FormDataEntryValue | null,previousImg: FormDataEntryValue | null){
     if(currentImg instanceof File){
     const bytes = await currentImg.arrayBuffer();
@@ -28,11 +33,8 @@ export async function imageUpload(currentImg: FormDataEntryValue | null,previous
     }
 }
 
-export async function imgUploadArray(imgcontainer:File[]|null){
+export async function imgUploadArray(imgcontainer:ImgContainerTypes[]){
+    const container = await Promise.all(imgcontainer.map(async(items,index)=>await imageUpload(items.current,items.previous)));
 
-    if(imgcontainer){
-        const container = await Promise.all(imgcontainer.map(async(items,index)=> await imageUpload(items,null)));
-
-        return container;
-    }
+    return container;
 }
