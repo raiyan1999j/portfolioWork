@@ -1,6 +1,6 @@
-import { refactor } from "@/lib/cloudinaryhelper";
 import { NextRequest, NextResponse } from "next/server";
 import { PrismaClient } from "../../../../generated/prisma";
+import { refactor } from "@/lib/helper";
 
 type CategoryData = {
     id:string,
@@ -13,7 +13,7 @@ export async function PUT(req:NextRequest){
     const formData = await req.formData();
     const retrieve = [...formData.entries()];
 
-    const refactorData = refactor(retrieve) as CategoryData;
+    const refactorData = refactor(retrieve,null) as CategoryData;
 
     try{
         await prisma.category.update({

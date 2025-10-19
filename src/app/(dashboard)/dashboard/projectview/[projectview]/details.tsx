@@ -2,6 +2,7 @@
 import DashLoading from "@/app/(dashboard)/loading";
 import AlertModal from "@/app/component/ui/alertmodal";
 import { InfoProvider } from "@/app/contextprovider/contextprovider";
+import { formDataConverter } from "@/lib/helper";
 import { useMutation, useQuery } from "@tanstack/react-query";
 import axios from "axios";
 import { CldImage } from "next-cloudinary";
@@ -50,8 +51,6 @@ const caprasimo = Caprasimo({
 })
 
 export default function Details({projectInfo}:ProjectInfoTypes){
-    console.log(projectInfo);
-
     const context = useContext(InfoProvider);
 
     if(!context) throw new Error("context error");
@@ -106,6 +105,26 @@ export default function Details({projectInfo}:ProjectInfoTypes){
                 setContentLoader(prev=>({...prev,dashboard:{...prev.dashboard,fullLoad:false}}))
             }
         }
+    });
+
+    const removeProjectImg = useMutation({
+        mutationFn:async({formData,indexNum,tableId}:{formData:FormData,indexNum:string,tableId:string})=>{
+            const putData = await axios.put(`/api/projectimgremove?indexNum=${indexNum}&&tableId=${tableId}`,formData);
+
+            const getData = putData;
+            
+            if(getData.status == 200){
+                handleModal("success",getData.data.message)
+
+                setContentLoader(prev=>({...prev,dashboard:{...prev.dashboard,fullLoad:false}}));
+            }else{
+                handleModal("danger",getData.data.message);
+
+                setContentLoader(prev=>({...prev,dashboard:{...prev.dashboard,fullLoad:false}}));
+
+                console.log(getData.data.message)
+            }
+        }
     })
 
     const inputHandler=(event:React.ChangeEvent<HTMLInputElement|HTMLTextAreaElement>)=>{
@@ -151,8 +170,19 @@ export default function Details({projectInfo}:ProjectInfoTypes){
         addProject.mutate(formData);
     }
 
-    const removeImgContainer=(indexNum:number)=>{
-        setProjectDetails(prev=>({...prev,imageArray:prev.imageArray.filter((_,index)=> index !== indexNum)}));
+    const removeImgContainer=(indexNum:number | string)=>{
+        if(typeof indexNum == "number"){
+            setProjectDetails(prev=>({...prev,imageArray:prev.imageArray.filter((_,index)=> index !== indexNum)}));
+        }else{
+            const copy = projectDetails.imageArray.filter(items=>items.previous !== indexNum);
+            const processArr = copy.map(items=>items.previous);
+
+            setProjectDetails(prev=>({...prev,imageArray:copy}));
+
+            formDataConverter(processArr,"imgcontainer",(formData)=>{removeProjectImg.mutate({formData,indexNum,tableId:projectInfo.id})});
+
+            setContentLoader(prev=>({...prev,dashboard:{...prev.dashboard,fullLoad:true}}));
+        }
     }
 
     useEffect(()=>{
@@ -207,7 +237,7 @@ export default function Details({projectInfo}:ProjectInfoTypes){
 
                                     projectDetails.imageArray[index]?.previous ?
                                     <>
-                                        <button className="absolute -top-2 -right-1 text-rose-200 transition-all duration-150 ease-linear hover:text-rose-500 hover:scale-125" onClick={()=>{removeImgContainer(index)}}>
+                                        <button className="absolute -top-2 -right-1 text-rose-200 transition-all duration-150 ease-linear hover:text-rose-500 hover:scale-125" onClick={()=>{removeImgContainer(projectDetails.imageArray[index].previous)}}>
                                             <ImCross />
                                         </button>
                                         <CldImage src={projectDetails.imageArray[index].previous} fill alt="projectImg" className="absolute object-contain"/>
