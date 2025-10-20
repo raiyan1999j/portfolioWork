@@ -81,11 +81,10 @@ export default function Details({projectInfo}:ProjectInfoTypes){
 
     const addProject= useMutation({
         mutationFn:async(formData:FormData)=>{
-            const postData = await axios.post("/api/projectadd",formData);
-            const getData = postData;
+            const postData = await axios.post("/api/projectdetailsadd",formData);
 
-            if(getData.status === 200){
-                handleModal("success",getData.data.message);
+            if(postData.status === 200){
+                handleModal("success",postData.data.message);
 
                 setContentLoader(prev=>({...prev,dashboard:{...prev.dashboard,fullLoad:false}}));
 
@@ -100,12 +99,28 @@ export default function Details({projectInfo}:ProjectInfoTypes){
                     live:null
                 });
             }else{
-                handleModal("danger",getData.data.message);
+                handleModal("danger",postData.data.message);
 
                 setContentLoader(prev=>({...prev,dashboard:{...prev.dashboard,fullLoad:false}}))
             }
         }
     });
+
+    const updateProject = useMutation({
+        mutationFn:async(formData:FormData)=>{
+            const updateData = await axios.put('/api/projectdetailsupdate',formData);
+            
+            if(updateData.status === 200){
+                handleModal("success",updateData.data.message);
+
+                setContentLoader(prev=>({...prev,dashboard:{...prev.dashboard,fullLoad:false}}));
+            }else{
+                handleModal("danger",updateData.data.message);
+
+                setContentLoader(prev=>({...prev,dashboard:{...prev.dashboard,fullLoad:false}}));
+            }
+        }
+    })
 
     const removeProjectImg = useMutation({
         mutationFn:async({formData,indexNum,tableId}:{formData:FormData,indexNum:string,tableId:string})=>{
@@ -117,12 +132,12 @@ export default function Details({projectInfo}:ProjectInfoTypes){
                 handleModal("success",getData.data.message)
 
                 setContentLoader(prev=>({...prev,dashboard:{...prev.dashboard,fullLoad:false}}));
+
+                console.log(getData.data.data)
             }else{
                 handleModal("danger",getData.data.message);
 
                 setContentLoader(prev=>({...prev,dashboard:{...prev.dashboard,fullLoad:false}}));
-
-                console.log(getData.data.message)
             }
         }
     })
@@ -143,6 +158,17 @@ export default function Details({projectInfo}:ProjectInfoTypes){
         const copy = projectDetails;
         const {selectedImg,...obj} = copy;
 
+        formDataConvertHelper(obj,(formData)=>{addProject.mutate(formData)})
+    }
+
+    const projectUpdate=()=>{
+        const copy = projectDetails;
+        const {selectedImg,...obj} = copy;
+
+        formDataConvertHelper(obj,(formData)=>{updateProject.mutate(formData)})
+    }
+
+    const formDataConvertHelper=(obj:Record<string,any>,callback:(formData:FormData)=>void)=>{
         const formData = new FormData();
 
         Object.entries(obj).forEach(([key,value])=>{
@@ -164,10 +190,10 @@ export default function Details({projectInfo}:ProjectInfoTypes){
                 })
             }
         });
-        
-        setContentLoader(prev=>({...prev,dashboard:{...prev.dashboard,fullLoad:true}}));
 
-        addProject.mutate(formData);
+        callback(formData);
+
+        setContentLoader(prev=>({...prev,dashboard:{...prev.dashboard,fullLoad:true}}));
     }
 
     const removeImgContainer=(indexNum:number | string)=>{
@@ -308,7 +334,7 @@ export default function Details({projectInfo}:ProjectInfoTypes){
                 <div className="flex flex-row justify-end w-full mt-10">
                     {
                         projectDetails.id?
-                        <button className={`${anton.className} px-5 py-2.5 bg-[#3498db] text-white rounded-xl uppercase transtion-all duration-150 ease-linear hover:bg-[#2980b9]`} onClick={projectAdd}>
+                        <button className={`${anton.className} px-5 py-2.5 bg-[#3498db] text-white rounded-xl uppercase transtion-all duration-150 ease-linear hover:bg-[#2980b9]`} onClick={projectUpdate}>
                         Update Project
                         </button>:
                         <button className={`${anton.className} px-5 py-2.5 bg-[#2ecc71] text-white rounded-xl uppercase transtion-all duration-150 ease-linear hover:bg-[#27ae60]`} onClick={projectAdd}>

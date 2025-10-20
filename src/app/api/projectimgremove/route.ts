@@ -13,8 +13,8 @@ export async function PUT(req:NextRequest){
     const retrieve = [...formData.entries()];
     const refactorData = refactor(retrieve,"imgcontainer");
 
-    // return NextResponse.json({message:refactorData});
-
+    const checkRefactorData = Object.keys(refactorData).length === 0 ? [] : refactorData.imgcontainer;
+    
     try{
         if(id){
             await cloudinary.uploader.destroy(id)
@@ -25,7 +25,7 @@ export async function PUT(req:NextRequest){
                 id: tableId?.toString()
             },
             data:{
-                imgcontainer:refactorData.imgcontainer
+                imgcontainer:checkRefactorData
             }
         });
 
@@ -33,5 +33,4 @@ export async function PUT(req:NextRequest){
     }catch(error){
         return NextResponse.json({message:error})
     }
-
 }
