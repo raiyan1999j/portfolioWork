@@ -87,6 +87,24 @@ export default function CategoryTable(){
         },
 
         onSuccess:()=>{querylient.invalidateQueries({queryKey:["categoryData"]})}
+    });
+
+    const removeCategory = useMutation({
+        mutationFn:async(idNum:string)=>{
+            const removeData = await axios.delete(`/api/categoryremove?tableId=${idNum}`);
+
+            if(removeData.status === 200){
+                handleModal("warning",removeData.data.message);
+
+                setContentLoader(prev=>({...prev,dashboard:{...prev.dashboard,fullLoad:false}}));
+            }else{
+                handleModal("danger",removeData.data.message);
+
+                setContentLoader(prev=>({...prev,dashboard:{...prev.dashboard,fullLoad:false}}));
+                
+            }
+        },
+        onSuccess:()=>{querylient.invalidateQueries({queryKey:["categoryData"]})}
     })
     
     const categoryUpdate=(indexNum:number)=>{
@@ -137,6 +155,12 @@ export default function CategoryTable(){
         router.push(`/dashboard/projectview/details?${searchParams}`);
 
         setPageLoader(prev=>({...prev,dashboard:true}));
+    }
+
+    const categoryRemove=(idNum:string)=>{
+        removeCategory.mutate(idNum);
+
+        setContentLoader(prev=>({...prev,dashboard:{...prev.dashboard,fullLoad:true}}))
     }
 
     useEffect(()=>{
@@ -211,7 +235,7 @@ export default function CategoryTable(){
                                         <MdOutlineAssignment />
                                     </button>
 
-                                    <button className="transition-all duration-150 ease-linear hover:text-[#e74c3c] hover:scale-125">
+                                    <button className="transition-all duration-150 ease-linear hover:text-[#e74c3c] hover:scale-125" onClick={()=>{categoryRemove(items.id)}}>
                                         <MdOutlineDelete />
                                     </button>
                                     
