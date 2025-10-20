@@ -111,7 +111,7 @@ export default function Details({projectInfo}:ProjectInfoTypes){
             const updateData = await axios.put('/api/projectdetailsupdate',formData);
             
             if(updateData.status === 200){
-                handleModal("success",updateData.data.message);
+                handleModal("info",updateData.data.message);
 
                 setContentLoader(prev=>({...prev,dashboard:{...prev.dashboard,fullLoad:false}}));
             }else{
@@ -129,7 +129,7 @@ export default function Details({projectInfo}:ProjectInfoTypes){
             const getData = putData;
             
             if(getData.status == 200){
-                handleModal("success",getData.data.message)
+                handleModal("warning",getData.data.message)
 
                 setContentLoader(prev=>({...prev,dashboard:{...prev.dashboard,fullLoad:false}}));
 

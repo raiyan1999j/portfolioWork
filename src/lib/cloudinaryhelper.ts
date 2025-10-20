@@ -38,3 +38,7 @@ export async function imgUploadArray(imgcontainer:ImgContainerTypes[]){
 
     return container;
 }
+
+export async function removeImageArray(imgcontainer:string[]){
+    await Promise.all(imgcontainer.map(async(items)=> await cloudinary.uploader.destroy(items)));
+}
