@@ -39,7 +39,7 @@ const menus = [
     },
     {
         title:"resume",
-        link:"#",
+        link:"/dashboard/resume",
         icon:<PiReadCvLogoBold />
     },
 ]
