@@ -29,7 +29,7 @@ export default function Introduce(){
     }
     return(
         <>
-        <div className="flex flex-row w-full gap-x-40 mt-5 px-5">
+        <div className="grid grid-cols-2 w-full gap-x-40 mt-5 px-5">
             <div className="w-full">
                 <h2 className={`${anton.className} text-3xl text-[#95a5a6]/40 tracking-wide`}>
                     Your name & Profession
@@ -89,6 +89,12 @@ export default function Introduce(){
                     </div>
                 </div>
             </div>
+        </div>
+
+        <div className="flex flex-row justify-end mt-5 px-5">
+            <button className="px-5 py-2.5 rounded-xl bg-[#2ecc71] text-white">
+                add info
+            </button>
         </div>
         </>
     )
