@@ -1,5 +1,6 @@
 import { Anton, Jost } from "next/font/google"
 import WorkExp from "./workexp"
+import Skills from "./skills"
 
 const anton = Anton({
     subsets:["latin"],
@@ -13,7 +14,7 @@ const jost = Jost({
 export default function WorkSkill(){
     return(
         <>
-        <div className="grid grid-cols-6 gap-x-5 mt-5 px-5">
+        <div className="grid grid-cols-6 gap-x-10 mt-5 px-5">
             <div className="col-span-4">
                 <h2 className={`${anton.className} text-3xl text-[#95a5a6]/40 tracking-wide`}>
                     Work Experience
@@ -26,6 +27,8 @@ export default function WorkSkill(){
                 <h2 className={`${anton.className} text-3xl text-[#95a5a6]/40 tracking-wide`}>
                     Skills
                 </h2>
+
+                <Skills/>
             </div>
         </div>
         </>
